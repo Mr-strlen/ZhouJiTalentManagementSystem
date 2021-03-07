@@ -78,15 +78,41 @@
                 function(data) {
                     console.log(data);
                     //发异步，把数据提交给php
-                    layer.alert("增加成功", {
-                        icon: 6
+                    $.ajax({
+                     url:"/checkadd",
+                    type:"post",
+                   data:"username="+$("#L_username").val()+"&password="+$("#L_pass").val(),
+                 //  data:"username=qwe&password=123",
+                    dataType:"text",
+                    //发送请求成功后执行
+                    success:function (data1) {
+
+                       if(data1=="1"){
+                      //  alert("成功")
+                    // location.href='login.html'
+
+                       }
+                       else{
+                       alert("用户已存在")
+                       location.href='member-add.html'
+                       }
                     },
+                    error:function () {
+                        alert("请求失败！")
+                    }
+                })
+                     layer.alert("成功", {
+                       icon: 6
+                       },
+
+
+
                     function() {
                         //关闭当前frame
                         xadmin.close();
-
+                        location.href='login.html'
                         // 可以对父窗口进行刷新 
-                        xadmin.father_reload();
+                       // xadmin.father_reload();
                     });
                     return false;
                 });

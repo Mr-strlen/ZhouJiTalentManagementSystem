@@ -26,9 +26,9 @@
         <div id="darkbannerwrap"></div>
         
         <form method="post" class="layui-form" >
-            <input name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
+            <input id="username" name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
             <hr class="hr15">
-            <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+            <input id="password" name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
             <hr class="hr15">
             <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
             <hr class="hr20" >
@@ -45,20 +45,30 @@
               //监听提交
               form.on('submit(login)', function(data){
                 // alert(888)
-                layer.msg(JSON.stringify(data.field),function(){
+               // layer.msg(JSON.stringify(data.field),function(){
+                 layer.msg("用户名或密码错误",function(){
                     //location.href='index.html'
 
                 });
                 //alert(JSON.stringify(data.field))
                 $.ajax({
-                type:"GET",
-                url="/check",
-                data:JSON.stringify(data.field),
-                success:function(data){log }
-
+                     url:"/check",
+                    type:"post",
+                   data:"username="+$("#username").val()+"&password="+$("#password").val(),
+                   //data:str,
+                    dataType:"text",
+                    //发送请求成功后执行
+                    success:function (data) {
+                       // alert("发送成功")
+                       if(data=="1")
+                           location.href='index'
+                    },
+                    error:function () {
+                        alert("请求失败！")
+                    }
                 })
 
-               location.href='index'
+               //location.href='index'
                // self.location="index.html"
                 return false;
               });
