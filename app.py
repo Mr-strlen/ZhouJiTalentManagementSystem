@@ -14,10 +14,16 @@ class Manager_Info(db.Model):
      #定义表名 ZJTMS_Manager_Info
      __tablename__ = "ZJTMS_Manager_Info"
      # 定义字段
-     Manager_Id = db.Column(db.String(18),nullable=True,primary_key=True)
+     Manager_Id = db.Column(db.String(20),nullable=True,primary_key=True)
      Manager_Mail = db.Column(db.String(50),nullable=False)
      Manager_Pwd=db.Column(db.String(20),nullable=False)
      Manager_Permission=db.Column(db.String(20),nullable=False)
+
+     def __init__(self, name, email, pwd, permission):
+         self.Manager_Id = name
+         self.Manager_Mail = email
+         self.Manager_Pwd = pwd
+         self.Manager_Permission = permission
 
 
 # 初始欢迎页
@@ -70,8 +76,8 @@ def CheckLogin():
     if request.method == 'POST':
         name = request.form.get("username")
         pwd = request.form.get("password")
-        print(name,pwd)
-        temp=db.session.query(Manager_Info).filter(Manager_Info.Manager_Id==name,Manager_Info.Manager_Pwd==pwd).all()
+        print(name, pwd)
+        temp=db.session.query(Manager_Info).filter(Manager_Info.Manager_Id == name, Manager_Info.Manager_Pwd == pwd).all()
         print(temp)
         if len(temp) > 0:
             return render_template("index.html")
@@ -84,12 +90,14 @@ def CheckLogin():
 def Register():
     if request.method == 'POST':
         name = request.form.get("username")
-        email= request.form.get("usermail")
+        email = request.form.get("usermail")
         pwd = request.form.get("password")
-        manager_info=Manager_Info(name,email,pwd,'N')
+        permission = "N"
+        print(name, email, pwd, permission)
+        manager_info = Manager_Info(name, email, pwd, permission)
         db.session.add(manager_info)
         db.session.commit()
-        return 
+        return "1"
     return render_template("register.html")
 
 # 系统主页
