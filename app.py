@@ -1,9 +1,11 @@
-from flask import Flask, url_for
-from flask import request
-from flask import render_template,redirect
+from flask import Flask, url_for,render_template,redirect,request,session,abort
 from flask_sqlalchemy import SQLAlchemy
+import os
 app=Flask(__name__)
+# session 秘钥
+app.secret_key = os.getenv("SECRET_KEY", "secret string")
 
+# orm初始化
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ZhouJiAdmin:ZhouJi123#@47.102.195.43:3306/ZhouJiTalentMS'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
@@ -30,7 +32,40 @@ def Welcome():
 # 1.1 登录流程
 @app.route("/login")
 def Login():
-    return render_template("login.html")
+    # 写入到session中
+    session["logged_in"] = True
+    return redirect(url_for("hi"))
+
+## session 样例 储存信息 读取信息并进行判断
+@app.route("/admin")
+def admin():
+    if "logged_in" not in session:
+        abort(403)
+    return "welcome to admin page"
+## 读取session 并做不同判断
+@app.route("/hi")
+def hi():
+    name = request.args.get("name")
+    if name is None:
+        # 从cookie中取值
+        name = request.cookies.get("name", "default")
+        response = "<h1>hi, %s</h1>" % name
+        # 根据用户的不同状态返回不同的内容
+        print("session: %s" % session)
+        print("type(session): %s" % type(session))
+        print("session.get('logged_in'): %s" % session.get('logged_in'))
+    if 'logged_in' in session:
+        response += "<p>[Authenticated]</p>"
+    else:
+        response += "<p>[Not Authenticated]</p>"
+    return response
+## session 登出
+@app.route("/logout")
+def logout():
+    if "logged_in" in session:
+        session.pop("logged_in")
+    return redirect(url_for("hi"))
+
 
 @app.route("/check")
 def CheckLogin():
@@ -73,6 +108,9 @@ def StuffLeave():
 def UnemployList():
     return render_template("unemploy_list.html")
 
+@app.route("/welcome")
+def welcome():
+    return render_template("welcome.html")
 
 if __name__ == '__main__':
     app.run(port=5000)
