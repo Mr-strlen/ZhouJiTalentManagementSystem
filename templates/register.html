@@ -79,7 +79,24 @@
                 form.on('submit(add)',
                 function(data) {
                     console.log(data);
-                    //发异步，把数据提交给php
+                    //发异步，把数据提交给后端
+                    $.ajax({
+                        url:"/register",
+                        type:"post",
+                        data:"username="+$("#L_username").val()+"usermail="+$("#L_email").val()+"&password="+$("#L_pass").val(),
+                        dataType:"text",
+                        //发送请求成功后执行
+                        success:function (data) {
+                           if(data=="1"){
+                           }
+                           else if(data=="2"){
+                           alert("用户已存在")
+                           }
+                        },
+                        error:function () {
+                            alert("请求失败！")
+                        }
+                    }),
                     layer.alert("增加成功", {
                         icon: 6
                     },
@@ -92,8 +109,8 @@
                     });
                     return false;
                 });
-
-            });</script>
+            });
+        </script>
         <script>var _hmt = _hmt || []; (function() {
                 var hm = document.createElement("script");
                 hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";

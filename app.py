@@ -81,8 +81,12 @@ def CheckLogin():
             return render_template("login.html")
 
 # 1.2 注册流程
-@app.route("/register")
+@app.route("/register",methods=['GET', 'POST'])
 def Register():
+    if request.method == 'POST':
+        name = request.form.get("username")
+        email= request.form.get("usermail")
+        pwd = request.form.get("password")
     return render_template("register.html")
 
 # 系统主页
