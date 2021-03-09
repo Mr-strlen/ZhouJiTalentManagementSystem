@@ -11,7 +11,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
-class Company(db.Model):
+class Manager_Info(db.Model):
      #定义表名 ZJTMS_Manager_Info
      __tablename__ = "ZJTMS_Manager_Info"
      # 定义字段
@@ -23,20 +23,19 @@ class Company(db.Model):
 # 初始欢迎页
 @app.route("/")
 def Welcome():
-    results=Company.query.all()
-    for result in results:
-        print(result.Manager_Id,result.Manager_Mail,result.Manager_Pwd)
     return render_template("initwelcome.html")
 
 ## 1. 登录注册流程
 # 1.1 登录流程
 @app.route("/login")
 def Login():
+    if request.method == 'GET':
+        return render_template('login.html')
     # 写入到session中
     session["logged_in"] = True
     return render_template("login.html")
 #    return redirect(url_for("hi"))
-
+'''
 ## session 样例 储存信息 读取信息并进行判断
 @app.route("/admin")
 def admin():
@@ -66,7 +65,7 @@ def logout():
     if "logged_in" in session:
         session.pop("logged_in")
     return redirect(url_for("hi"))
-
+'''
 
 @app.route("/checklogin")
 def CheckLogin():
