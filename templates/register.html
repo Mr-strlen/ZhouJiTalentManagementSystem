@@ -21,6 +21,12 @@
         <div class="layui-fluid">
             <div class="layui-row" >
                 <form class="layui-form" >
+                     <div class="layui-form-item">
+                        <label for="L_username" class="layui-form-label">
+                            <span class="x-red">*</span>用户身份证号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" id="L_username" name="username" required="" lay-verify="idname" autocomplete="off" class="layui-input"></div>
+                    </div>
                     <div class="layui-form-item">
                         <label for="L_email" class="layui-form-label">
                             <span class="x-red">*</span>邮箱</label>
@@ -28,12 +34,6 @@
                             <input type="text" id="L_email" name="email" required="" lay-verify="email" autocomplete="off" class="layui-input"></div>
                         <div class="layui-form-mid layui-word-aux">
                             <span class="x-red">*</span>将会成为您唯一的登入名</div></div>
-                    <div class="layui-form-item">
-                        <label for="L_username" class="layui-form-label">
-                            <span class="x-red">*</span>昵称</label>
-                        <div class="layui-input-inline">
-                            <input type="text" id="L_username" name="username" required="" lay-verify="nikename" autocomplete="off" class="layui-input"></div>
-                    </div>
                     <div class="layui-form-item">
                         <label for="L_pass" class="layui-form-label">
                             <span class="x-red">*</span>密码</label>
@@ -48,7 +48,9 @@
                     </div>
                     <div class="layui-form-item">
                         <label for="L_repass" class="layui-form-label"></label>
-                        <button class="layui-btn" lay-filter="add" lay-submit="">增加</button></div>
+                        <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
+                        <button class="layui-btn" lay-filter="reset" lay-submit="" type="reset">重置</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -60,9 +62,9 @@
 
                 //自定义验证规则
                 form.verify({
-                    nikename: function(value) {
-                        if (value.length < 5) {
-                            return '昵称至少得5个字符啊';
+                    idname: function(value) {
+                        if (value.length !=18) {
+                            return '用户名为18位身份证号';
                         }
                     },
                     pass: [/(.+){6,12}$/, '密码必须6到12位'],

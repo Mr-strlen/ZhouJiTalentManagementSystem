@@ -20,18 +20,10 @@
 <body>
     <div>欢迎使用舟楫系统</div>
 
-    <div class="login layui-anim layui-anim-up">
-        <div >
-            <form method="get" action="/login" class="layui-form">
-                <input value="登录系统" lay-submit lay-filter="loginsystem" style="width:100%;" type="submit" >
-                <hr class="hr20" >
-            </form>
-        </div>
-        <div>
-            <form method="get"  class="layui-form">
-                <input value="加入我们" lay-submit lay-filter="addus" style="width:100%;" type="submit" >
-                <hr class="hr20" >
-            </form>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+          <a href="/login"><button class="layui-btn" lay-submit lay-filter="loginsys">登录系统</button></a>
+          <button class="layui-btn" lay-submit lay-filter="loginsys">加入我们</button>
         </div>
     </div>
 </body>

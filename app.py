@@ -1,4 +1,4 @@
-from flask import Flask, url_for,render_template,redirect,request,session,abort
+from flask import Flask, url_for,render_template,redirect,request,session,abort,flash
 from flask_sqlalchemy import SQLAlchemy
 import os
 app=Flask(__name__)
@@ -10,7 +10,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ZhouJiAdmin:ZhouJi123#@
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
-
 class Manager_Info(db.Model):
      #定义表名 ZJTMS_Manager_Info
      __tablename__ = "ZJTMS_Manager_Info"
@@ -19,6 +18,8 @@ class Manager_Info(db.Model):
      Manager_Mail = db.Column(db.String(50),nullable=False)
      Manager_Pwd=db.Column(db.String(20),nullable=False)
      Manager_Permission=db.Column(db.String(20),nullable=False)
+SessionDb = db.session
+
 
 # 初始欢迎页
 @app.route("/")
@@ -29,8 +30,6 @@ def Welcome():
 # 1.1 登录流程
 @app.route("/login")
 def Login():
-    if request.method == 'GET':
-        return render_template('login.html')
     # 写入到session中
     session["logged_in"] = True
     return render_template("login.html")
@@ -67,15 +66,23 @@ def logout():
     return redirect(url_for("hi"))
 '''
 
-@app.route("/checklogin")
+@app.route("/checklogin",methods=['GET', 'POST'])
 def CheckLogin():
-    return render_template("index.html")
+    if request.method == 'POST':
+        name = request.form.get("username")
+        pwd = request.form.get("password")
+        print(name,pwd)
+        temp=SessionDb.query(Manager_Info).filter(Manager_Info.Manager_Id==name,Manager_Info.Manager_Pwd==pwd).all()
+        print(temp)
+        if len(temp) > 0:
+            return render_template("index.html")
+        else:
+            flash('用户名或密码错误')
+            return render_template("login.html")
 
 # 1.2 注册流程
 @app.route("/register")
 def Register():
-    if request.method == 'GET':
-        return render_template('register.html')
     return render_template("register.html")
 
 # 系统主页

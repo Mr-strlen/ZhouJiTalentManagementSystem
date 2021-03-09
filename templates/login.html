@@ -23,7 +23,7 @@
         <div class="message">舟楫管理系统登录</div>
         <div id="darkbannerwrap"></div>
         
-        <form method="post" class="layui-form" >
+        <form method="POST" action="/checklogin" class="layui-form" >
             <input name="username" placeholder="用户名" lay-verify="required" type="text"  class="layui-input" >
             <hr class="hr15">
             <input name="password"  placeholder="密码" lay-verify="required" type="password" class="layui-input">
@@ -31,34 +31,7 @@
             <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
             <hr class="hr20" >
         </form>
-        <form method="get" action="/register" class="layui-form">
-            <input value="注册" lay-submit lay-filter="register" style="width:100%;" type="submit" >
-            <hr class="hr20" >
-        </form>
+        <a href="/register"><button class="layui-btn" lay-submit lay-filter="register">注册</button></a>
     </div>
-    <script>
-        $(function  () {
-            layui.use('form', function(){
-                var form = layui.form;
-                //监听提交
-                form.on('submit(login)', function(data){
-                    $.ajax({
-                        url:"/checklogin",
-                        type:"post",
-                        data:"username="+$("#username").val()+"&password="+$("#password").val(),
-                        //发送请求成功后执行
-                        success:function (data) {
-                           // alert("发送成功")
-                        },
-                        error:function () {
-                            alert("用户名或密码不正确！")
-                        }
-                    });
-                });
-
-            });
-        })
-    </script>
-    <!-- 底部结束 -->
 </body>
 </html>
