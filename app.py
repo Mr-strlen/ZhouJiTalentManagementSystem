@@ -23,7 +23,7 @@ class Company(db.Model):
 def Welcome():
     results=Company.query.all()
     for result in results:
-        print(result.Company_Name,result.Boss_Id,result.Boss_Name)
+        print(result.Manager_Id,result.Manager_Mail,result.Manager_Pwd)
     return render_template("initwelcome.html")
 
 ## 1. 登录注册流程
