@@ -18,7 +18,6 @@ class Manager_Info(db.Model):
      Manager_Mail = db.Column(db.String(50),nullable=False)
      Manager_Pwd=db.Column(db.String(20),nullable=False)
      Manager_Permission=db.Column(db.String(20),nullable=False)
-SessionDb = db.session
 
 
 # 初始欢迎页
@@ -72,7 +71,7 @@ def CheckLogin():
         name = request.form.get("username")
         pwd = request.form.get("password")
         print(name,pwd)
-        temp=SessionDb.query(Manager_Info).filter(Manager_Info.Manager_Id==name,Manager_Info.Manager_Pwd==pwd).all()
+        temp=db.session.query(Manager_Info).filter(Manager_Info.Manager_Id==name,Manager_Info.Manager_Pwd==pwd).all()
         print(temp)
         if len(temp) > 0:
             return render_template("index.html")
@@ -87,6 +86,10 @@ def Register():
         name = request.form.get("username")
         email= request.form.get("usermail")
         pwd = request.form.get("password")
+        manager_info=Manager_Info(name,email,pwd,'N')
+        db.session.add(manager_info)
+        db.session.commit()
+        return 
     return render_template("register.html")
 
 # 系统主页
