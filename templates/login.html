@@ -24,17 +24,51 @@
         <div id="darkbannerwrap"></div>
         
         <form method="post" class="layui-form" >
-            <input name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
+            <input name="username" placeholder="用户名"  type="text"  class="layui-input" >
             <hr class="hr15">
-            <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+            <input name="password"  placeholder="密码"  type="password" class="layui-input">
             <hr class="hr15">
-            <button class="layui-btn" lay-submit lay-filter="login" style="width:30%;">提交</button>
-			<button class="layui-btn" lay-submit lay-filter="register" style="width:30%;">注册</button>
+            <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
+            <hr class="hr20" >
+            <input value="注册" lay-submit lay-filter="register" style="width:100%;" type="submit">
             <hr class="hr20" >
         </form>
     </div>
-
     <script>
+        $(function  () {
+            layui.use('form', function(){
+                var form = layui.form;
+                //监听提交
+                form.on('submit(register)', function(data){
+                    $.ajax({
+                        url:"/register",
+                        type:"post",
+                        data:"username="+$("#username").val()+"&password="+$("#password").val(),
+                        success:function (data) {
+                           // alert("发送成功")
+                        },
+                        error:function () {
+                            alert("注册页跳转失败")
+                        }
+                    });
+                });
+                form.on('submit(login)', function(data){
+                    $.ajax({
+                        url:"/checklogin",
+                        type:"post",
+                        data:"username="+$("#username").val()+"&password="+$("#password").val(),
+                        //发送请求成功后执行
+                        success:function (data) {
+                           // alert("发送成功")
+                        },
+                        error:function () {
+                            alert("用户名或密码不正确！")
+                        }
+                    });
+                });
+
+            });
+        })
     </script>
     <!-- 底部结束 -->
 </body>

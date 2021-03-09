@@ -34,7 +34,8 @@ def Welcome():
 def Login():
     # 写入到session中
     session["logged_in"] = True
-    return redirect(url_for("hi"))
+    return render_template("login.html")
+#    return redirect(url_for("hi"))
 
 ## session 样例 储存信息 读取信息并进行判断
 @app.route("/admin")
@@ -67,14 +68,14 @@ def logout():
     return redirect(url_for("hi"))
 
 
-@app.route("/check")
+@app.route("/checklogin")
 def CheckLogin():
     return render_template("index.html")
 
 # 1.2 注册流程
 @app.route("/register")
 def Register():
-    return render_template("index.html")
+    return render_template("register.html")
 
 # 系统主页
 @app.route("/index")
