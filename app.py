@@ -10,12 +10,13 @@ app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
 class Company(db.Model):
-     #定义表名1
-     __tablename__ = "Company"
+     #定义表名 ZJTMS_Manager_Info
+     __tablename__ = "ZJTMS_Manager_Info"
      # 定义字段
-     Company_Name = db.Column(db.String(20),nullable=True)
-     Boss_Id = db.Column(db.String(18),primary_key=True,nullable=True)
-     Boss_Name=db.Column(db.String(255))
+     Manager_Id = db.Column(db.String(18),nullable=True,primary_key=True)
+     Manager_Mail = db.Column(db.String(50),nullable=False)
+     Manager_Pwd=db.Column(db.String(20),nullable=False)
+     Manager_Permission=db.Column(db.String(20),nullable=False)
 
 # 初始欢迎页
 @app.route("/")
@@ -23,7 +24,7 @@ def Welcome():
     results=Company.query.all()
     for result in results:
         print(result.Company_Name,result.Boss_Id,result.Boss_Name)
-    return render_template("welcome.html")
+    return render_template("initwelcome.html")
 
 ## 1. 登录注册流程
 # 1.1 登录流程
