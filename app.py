@@ -1,6 +1,7 @@
 from flask import Flask, url_for,render_template,redirect,request,session,abort,flash
 from flask_sqlalchemy import SQLAlchemy
 import os
+import random
 app=Flask(__name__)
 # session 秘钥
 app.secret_key = os.getenv("SECRET_KEY", "secret string")
@@ -10,11 +11,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ZhouJiAdmin:ZhouJi123#@
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+
+#  管理员表
 class Manager_Info(db.Model):
      #定义表名 ZJTMS_Manager_Info
      __tablename__ = "ZJTMS_Manager_Info"
      # 定义字段
-     Manager_Id = db.Column(db.String(20),nullable=True,primary_key=True)
+     Manager_Id = db.Column(db.String(20),nullable=False,primary_key=True)
      Manager_Mail = db.Column(db.String(50),nullable=False)
      Manager_Pwd=db.Column(db.String(20),nullable=False)
      Manager_Permission=db.Column(db.String(20),nullable=False)
@@ -24,6 +27,41 @@ class Manager_Info(db.Model):
          self.Manager_Mail = email
          self.Manager_Pwd = pwd
          self.Manager_Permission = permission
+# 员工档案表
+class Staff_Info(db.Model):
+    # 定义表名
+    __tablename__ = "ZJTMS_Staff_Info"
+    # 定义字段
+    Staff_Name=db.Column(db.String(20),nullable=False)
+    Staff_Sex=db.Column(db.String(4),nullable=False)
+    Staff_Unit=db.Column(db.String(20),nullable=False)
+    Staff_Phone=db.Column(db.String(20),nullable=False)
+    Staff_Identify=db.Column(db.String(20),nullable=False,primary_key=True)
+    Staff_Duty=db.Column(db.String(20),nullable=True)
+    Staff_Years=db.Column(db.Integer,nullable=False)
+    Staff_Origin=db.Column(db.String(20),nullable=False)
+    Staff_GraduateCollege=db.Column(db.String(20),nullable=False)
+    Staff_Major=db.Column(db.String(20),nullable=False)
+    Staff_Degree=db.Column(db.String(20),nullable=False)
+    Staff_Marrige=db.Column(db.String(20),nullable=False)
+    Staff_Politic=db.Column(db.String(20),nullable=False)
+    Staff_HistoryUnit=db.Column(db.String(255),nullable=True)
+
+    def __init__(self,name,sex,unit,phone,identify,duty,years,origin,graduateCollege,major,degree,marrige,politic,historyUnit):
+        self.Staff_Name = name
+        self.Staff_Sex = sex
+        self.Staff_Unit = unit
+        self.Staff_Phone = phone
+        self.Staff_Identify = identify
+        self.Staff_Duty = duty
+        self.Staff_Years = years
+        self.Staff_Origin = origin
+        self.Staff_GraduateCollege = graduateCollege
+        self.Staff_Major = major
+        self.Staff_Degree = degree
+        self.Staff_Marrige = marrige
+        self.Staff_Politic = politic
+        self.Staff_HistoryUnit = historyUnit
 
 
 # 初始欢迎页
@@ -63,6 +101,7 @@ def hi():
     else:
         response += "<p>[Not Authenticated]</p>"
     return response
+
 ## session 登出
 @app.route("/logout")
 def logout():
@@ -107,24 +146,24 @@ def IndexPage():
 
 ## 2. 员工档案管理
 # 2.1 建立档案 - 新人报道
-@app.route("/stuff_add")
-def StuffAdd():
-    return render_template("stuff_add.html")
+@app.route("/staff_add")
+def StaffAdd():
+    return render_template("staff_add.html")
 
 # 2.2 档案查询 - 员工群落
-@app.route("/stuff_list")
-def StuffList():
-    return render_template("stuff_list.html")
+@app.route("/staff_list")
+def StaffList():
+    return render_template("staff_list.html")
 
 # 2.3 档案修改（勘误）
-@app.route("/stuff_change")
-def StuffChange():
-    return render_template("stuff_change.html")
+@app.route("/staff_change")
+def StaffChange():
+    return render_template("staff_change.html")
 
 # 2.4 档案修改（离职） - 员工离职
-@app.route("/stuff_leave")
-def StuffLeave():
-    return render_template("stuff_leave.html")
+@app.route("/staff_leave")
+def StaffLeave():
+    return render_template("staff_leave.html")
 
 ## 3. 未就业员工处理 - 员工联盟
 # 3.1  查询未就业人员 - 待业员工
