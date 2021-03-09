@@ -30,7 +30,9 @@
             <hr class="hr15">
             <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
             <hr class="hr20" >
-            <input value="注册" lay-submit lay-filter="register" style="width:100%;" type="submit">
+        </form>
+        <form method="get" action="/register" class="layui-form">
+            <input value="注册" lay-submit lay-filter="register" style="width:100%;" type="submit" >
             <hr class="hr20" >
         </form>
     </div>
@@ -39,19 +41,6 @@
             layui.use('form', function(){
                 var form = layui.form;
                 //监听提交
-                form.on('submit(register)', function(data){
-                    $.ajax({
-                        url:"/register",
-                        type:"post",
-                        data:"username="+$("#username").val()+"&password="+$("#password").val(),
-                        success:function (data) {
-                           // alert("发送成功")
-                        },
-                        error:function () {
-                            alert("注册页跳转失败")
-                        }
-                    });
-                });
                 form.on('submit(login)', function(data){
                     $.ajax({
                         url:"/checklogin",

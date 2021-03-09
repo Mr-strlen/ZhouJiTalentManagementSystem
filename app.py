@@ -75,6 +75,8 @@ def CheckLogin():
 # 1.2 注册流程
 @app.route("/register")
 def Register():
+    if request.method == 'GET':
+        return render_template('register.html')
     return render_template("register.html")
 
 # 系统主页
