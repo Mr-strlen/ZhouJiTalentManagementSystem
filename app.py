@@ -192,7 +192,7 @@ def StaffDel(id):
 # 2.3 档案修改（勘误）
 @app.route("/staff_change")
 def StaffChange():
-    return render_template("staff_change.html",)
+    return render_template("staff_change.html")
 
 # 2.4 档案修改（离职） - 员工离职
 @app.route("/staff_leave")
@@ -208,7 +208,33 @@ def StaffComment():
 # 3.1  查询未就业人员 - 待业员工
 @app.route("/unemploy_list")
 def UnemployList():
-    return render_template("unemploy_list.html")
+    username = request.args.get("username", '', str)
+    degree = request.args.get("degree", '', str)
+    offset = request.args.get('offset', 0, int)
+    limit = request.args.get('limit', 10, int)
+
+    search_str = "Staff_Info.Staff_Unit=='Empty',"
+    # 属性是否为空判断，拼接搜索条件
+    if len(username) > 0:
+        search_str = search_str + "Staff_Info.Staff_Identify == username,"
+    if len(degree) > 0:
+        search_str = search_str + "Staff_Info.Staff_Degree == degree,"
+
+    # 如果搜索条件为空，即为全部搜索
+    temp = []
+    if len(search_str) > 0:
+        search_str = search_str[0:-1]  # 逗号删减
+        temp = eval(
+            "db.session.query(Staff_Info).filter(" + search_str + ").order_by(Staff_Info.Staff_Identify).limit(limit).offset(offset).all()")
+        count = len(eval("db.session.query(Staff_Info).filter(" + search_str + ").all()"))
+    else:
+        temp = db.session.query(Staff_Info).order_by(Staff_Info.Staff_Identify).limit(limit).offset(offset).all()
+        count = len(db.session.query(Staff_Info).all())
+
+    print(degree, username)
+
+    return render_template("unemploy_list.html", page_data=temp, username=username, degree=degree, rangeid=0,
+                           offset=offset, limit=limit, count=count)
 
 @app.route("/welcome")
 def welcome():
