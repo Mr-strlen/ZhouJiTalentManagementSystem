@@ -21,11 +21,11 @@ class Company(db.Model):
     Boss_Id = db.Column(db.String(20), nullable=False, primary_key=True)
     Boss_Name = db.Column(db.String(30))
 
-
     def __init__(self, name, boss_id, boss_name):
         self.Company_Name = name
         self.Boss_Id = boss_id
         self.Boss_Name = boss_name
+
 #  管理员表
 class Manager_Info(db.Model):
      #定义表名 ZJTMS_Manager_Info
@@ -41,6 +41,7 @@ class Manager_Info(db.Model):
          self.Manager_Mail = email
          self.Manager_Pwd = pwd
          self.Manager_Permission = permission
+
 # 员工档案表
 class Staff_Info(db.Model):
     # 定义表名
