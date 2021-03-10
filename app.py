@@ -172,14 +172,15 @@ def StaffList():
     degree = request.form.get("degree", '', str)
     offset = request.args.get('offset', 0, int)
     limit = request.args.get('limit', 10, int)
-
+    unit = request.form.get("unit", '', str)
     search_str = ""
     # 属性是否为空判断，拼接搜索条件
     if len(name) > 0:
         search_str = search_str + "Staff_Info.Staff_Identify == name,"
     if len(degree) > 0:
         search_str = search_str + "Staff_Info.Staff_Degree == degree,"
-
+    if len(unit) > 0:
+        search_str = search_str + "Staff_Info.Staff_Unit == unit,"
     # 如果搜索条件为空，即为全部搜索
     temp = []
     if len(search_str) > 0:
