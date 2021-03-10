@@ -27,6 +27,7 @@
         <div class="layui-fluid">
             <div class="layui-row">
                 <form method="post" class="layui-form">
+ <!--                   <div>company:{{ company_lists[0].Company_Name }}</div> -->
                     <div class="layui-form-item">
                         <label for="name" class="layui-form-label">
 
@@ -48,6 +49,10 @@
                             <span class="x-red">*</span>当前所属单位</label>
                         <div class="layui-input-inline">
                             <select id="unit" name="unit" class="valid">
+                                {% for company in company_lists %}
+
+                                    <option value={{ company.Company_Name }}>{{ company.Company_Name }}</option>
+                                {% endfor %}
                                 <!--Alibaba-->
                                 <!--Tencent-->
                                 <!--ByteDance-->
@@ -57,7 +62,7 @@
                                 <!--FerryTalentMS-->
                                 <!--DiDi-->
                                 <!--Kwai-->
-                                <option value="Tencent">Tencent</option>
+<!--
                                 <option value="ByteDance">ByteDance</option>
                                 <option value="Alibaba">Alibaba</option>
                                 <option value="Baidu">Baidu</option>
@@ -66,6 +71,7 @@
                                 <option value="FerryTalentMS">FerryTalentMS</option>
                                 <option value="DiDi">DiDi</option>
                                 <option value="Kwai">Kwai</option>
+-->
                                 </select>
                         </div>
                     </div>

@@ -163,6 +163,11 @@ def IndexPage():
 # 2.1 建立档案 - 新人报道
 @app.route("/staff_add")
 def StaffAdd():
+    # 获取Company 表的公司数据
+    company_lists = db.session.query(Company).all()
+    for temp in company_lists:
+        print(temp.Company_Name)
+    # print(companylists)
     if request.method == 'POST':
         username = request.form.get("username")
         sexual = request.form.get("sexual")
@@ -191,7 +196,7 @@ def StaffAdd():
         db.session.add(staff_info)
         db.session.commit()
         return "1"
-    return render_template("staff_add.html")
+    return render_template("staff_add.html",company_lists=company_lists)
 
 # 2.2 档案查询 - 员工群落
 @app.route("/staff_list",methods=['GET', 'POST'])
