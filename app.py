@@ -88,8 +88,6 @@ def Welcome():
 # 1.1 登录流程
 @app.route("/login")
 def Login():
-    # 写入到session中
-    session["logged_in"] = True
     return render_template("login.html")
 #    return redirect(url_for("hi"))
 '''
@@ -134,7 +132,12 @@ def CheckLogin():
         temp=db.session.query(Manager_Info).filter(Manager_Info.Manager_Id == name, Manager_Info.Manager_Pwd == pwd).all()
         print(temp)
         if len(temp) > 0:
-            return render_template("index.html")
+            # 写入到session中
+            session["logged_in"] = True
+            session["identify"] = temp[0].Manager_Id
+            # session["username"] = True
+            session["permissions"] = "N" #权限判断在COO加入之后需要修改
+            return render_template("index.html",username=temp[0].Manager_Id)
         else:
             flash('用户名或密码错误')
             return render_template("login.html")
@@ -157,7 +160,8 @@ def Register():
 # 系统主页
 @app.route("/index")
 def IndexPage():
-    return render_template("index.html")
+    username = request.cookies.get("identify", "默认用户")
+    return render_template("index.html", username=username)
 
 ## 2. 员工档案管理
 # 2.1 建立档案 - 新人报道
@@ -168,15 +172,15 @@ def StaffAdd():
 # 2.2 档案查询 - 员工群落
 @app.route("/staff_list",methods=['GET', 'POST'])
 def StaffList():
-    name = request.form.get("username", '', str)
-    degree = request.form.get("degree", '', str)
+    username = request.args.get("username", '', str)
+    degree = request.args.get("degree", '', str)
     offset = request.args.get('offset', 0, int)
     limit = request.args.get('limit', 10, int)
 
     search_str = ""
     # 属性是否为空判断，拼接搜索条件
-    if len(name) > 0:
-        search_str = search_str + "Staff_Info.Staff_Identify == name,"
+    if len(username) > 0:
+        search_str = search_str + "Staff_Info.Staff_Identify == username,"
     if len(degree) > 0:
         search_str = search_str + "Staff_Info.Staff_Degree == degree,"
 
@@ -190,10 +194,9 @@ def StaffList():
         temp = db.session.query(Staff_Info).order_by(Staff_Info.Staff_Identify).limit(limit).offset(offset).all()
         count = len(db.session.query(Staff_Info).all())
 
-    for v in temp:
-        print(v.Staff_Name)
+    print(degree,username)
 
-    return render_template("staff_list.html", page_data=temp, rangeid=0, offset=offset, limit=limit, count=count)
+    return render_template("staff_list.html", page_data=temp, username=username, degree=degree, rangeid=0, offset=offset, limit=limit, count=count)
 
 # 嵌套在页面内 员工个人档案查看
 @app.route("/staff_look/<id>")

@@ -31,7 +31,7 @@
                 <div class="layui-col-md12">
                     <div class="layui-card">
                         <div class="layui-card-body ">
-                            <form class="layui-form layui-col-space5"  method="POST" action="/staff_list">
+                            <form class="layui-form layui-col-space5"  method="Get" action="/staff_list">
                                 <div class="layui-inline layui-show-xs-block">
                                     <input class="layui-input"  autocomplete="off" placeholder="开始日" name="start" id="start">
                                 </div>
@@ -39,10 +39,12 @@
                                     <input class="layui-input"  autocomplete="off" placeholder="截止日" name="end" id="end">
                                 </div>
 								<div class="layui-inline layui-show-xs-block">
-                                    <input type="text" name="degree"  placeholder="学历" autocomplete="off" class="layui-input">
+                                    <input type="text" name="degree"  placeholder="学历" autocomplete="off" class="layui-input"
+									 {% if degree %} value="{{ degree }}" {% endif %}>
                                 </div>
                                 <div class="layui-inline layui-show-xs-block">
-                                    <input type="text" name="username"  placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                                    <input type="text" name="username"  placeholder="请输入用户名" autocomplete="off" class="layui-input"
+									{% if name %} value="{{ username }}" {% endif %}>
                                 </div>
                                 <div class="layui-inline layui-show-xs-block">
                                     <button class="layui-btn"  lay-submit="" lay-filter="sreach" type="submit"><i class="layui-icon">&#xe615;</i></button>
@@ -116,7 +118,7 @@
 									{% set current_page = (offset/limit)|int + (1 if offset%limit else 0) %}
 									{% set total_page = (count/limit)|int + (1 if count%limit else 0) %}
 									<li class="{{ "disabled" if current_page - 1 <= 0 else "" }}">
-										<a href="{% if current_page > 1 %}{{ url_for('StaffList',rangeid=0,offset=(current_page-1)*limit, limit=limit) }}{% endif %}">&laquo;
+										<a href="{% if current_page > 1 %}{{ url_for('StaffList',rangeid=0,username=username, degree=degree, offset=(current_page-1)*limit, limit=limit) }}{% endif %}">&laquo;
 										</a>
 									</li>
 							 
@@ -125,7 +127,7 @@
 										{% if (i-0)|abs < 2 or (i-total_page)|abs < 3 or -2 < i-current_page < 5 %}
 											{% set prev = i %}
 											<li class="{% if i == current_page %}active{% endif %}">
-												 <a href="{{ url_for('StaffList',rangeid=0 , offset=i*limit, limit=limit) }}">{{ i + 1 }}</a>
+												 <a href="{{ url_for('StaffList',rangeid=0 ,username=username, degree=degree, offset=i*limit, limit=limit) }}">{{ i + 1 }}</a>
 											 </li>
 
 										 {% elif prev == i-1 %}
@@ -135,7 +137,7 @@
 									 {% endfor %}
 									 <li class="{{ "disabled" if current_page + 1 >= total_page else "" }}">
 										 <a href="
-												 {% if current_page + 1<total_page %}{{ url_for('StaffList',rangeid=0 , offset=(current_page + 1)*limit, limit=limit) }}{% endif %}">&raquo;</a>
+												 {% if current_page + 1<total_page %}{{ url_for('StaffList',rangeid=0 ,username=username, degree=degree, offset=(current_page + 1)*limit, limit=limit) }}{% endif %}">&raquo;</a>
 									 </li>
 								 </ul>
                                 </div>
