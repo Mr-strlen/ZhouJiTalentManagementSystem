@@ -2,7 +2,7 @@
 <html class="x-admin-sm">
     <head>
         <meta charset="UTF-8">
-        <title>ZhouJiTalented - 员工查询</title>
+        <title>ZhouJiTalented-员工查询</title>
         <meta name="renderer" content="webkit">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
@@ -64,7 +64,9 @@
                                     <th>用户名</th>
                                     <th>性别</th>
                                     <th>手机</th>
-                                    <th>学历</th>
+                                    <th>毕业院校</th>
+									<th>专业</th>
+									<th>学历</th>
                                     <th>状态</th>
                                     <th>操作</th></tr>
                                 </thead>
@@ -79,20 +81,23 @@
 										<td>{{ s.Staff_Name }}</td>
 										<td>{{ s.Staff_Sex }}</td>
 										<td>{{ s.Staff_Phone }}</td>
-										<td>{{ s.Staff_GraduateCollege }}-{{ s.Staff_Major }}-{{ s.Staff_Degree }}</td>
+										<td>{{ s.Staff_GraduateCollege }}</td>
+										<td>{{ s.Staff_Major }}</td>
+										<td>{{ s.Staff_Degree }}</td>
 										<td class="td-status">
 										  <span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span></td>
 										<td class="td-manage">
 										  <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
 											<i class="layui-icon">&#xe601;</i>
 										  </a>
-										  <a title="编辑"  onclick="xadmin.open('编辑','member-edit.html',600,400)" href="javascript:;">
+										  <a title="查看简历" onclick="xadmin.open('{{s.Staff_Name}}简历','/staff_look/{{s.Staff_Identify}}',600,400)"  href="javascript:;">
+											<i class="layui-icon">&#xe68e;</i>
+										  </a>
+										  <a title="编辑"  onclick="xadmin.open('编辑','staff_edit.html',600,400)" href="javascript:;">
 											<i class="layui-icon">&#xe642;</i>
 										  </a>
-										  <a onclick="xadmin.open('修改密码','member-password.html',600,400)" title="修改密码" href="javascript:;">
-											<i class="layui-icon">&#xe631;</i>
-										  </a>
-										  <a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
+										 
+										  <a title="删除" onclick="member_del(this,{{s.Staff_Identify}})" href="javascript:;">
 											<i class="layui-icon">&#xe640;</i>
 										  </a>
 										</td>
@@ -104,12 +109,35 @@
                         <div class="layui-card-body ">
                             <div class="page">
                                 <div>
-                                  <a class="prev" href="">&lt;&lt;</a>
-                                  <a class="num" href="">1</a>
-                                  <span class="current">2</span>
-                                  <a class="num" href="">3</a>
-                                  <a class="num" href="">489</a>
-                                  <a class="next" href="">&gt;&gt;</a>
+                                 <ul class="pagination">
+									{% set offset = (offset)|int %}
+									{% set limit = (limit)|int %}
+									{% set count = (count)|int %}
+									{% set current_page = (offset/limit)|int + (1 if offset%limit else 0) %}
+									{% set total_page = (count/limit)|int + (1 if count%limit else 0) %}
+									<li class="{{ "disabled" if current_page - 1 <= 0 else "" }}">
+										<a href="{% if current_page > 1 %}{{ url_for('StaffList',rangeid=0,offset=(current_page-1)*limit, limit=limit) }}{% endif %}">&laquo;
+										</a>
+									</li>
+							 
+									{% set prev = 0 %}
+									{% for i in range(0, (total_page)|int) %}
+										{% if (i-0)|abs < 2 or (i-total_page)|abs < 3 or -2 < i-current_page < 5 %}
+											{% set prev = i %}
+											<li class="{% if i == current_page %}active{% endif %}">
+												 <a href="{{ url_for('StaffList',rangeid=0 , offset=i*limit, limit=limit) }}">{{ i + 1 }}</a>
+											 </li>
+
+										 {% elif prev == i-1 %}
+											 <li class="disabled"><a>…</a></li>
+							 
+										 {% endif %}
+									 {% endfor %}
+									 <li class="{{ "disabled" if current_page + 1 >= total_page else "" }}">
+										 <a href="
+												 {% if current_page + 1<total_page %}{{ url_for('StaffList',rangeid=0 , offset=(current_page + 1)*limit, limit=limit) }}{% endif %}">&raquo;</a>
+									 </li>
+								 </ul>
                                 </div>
                             </div>
                         </div>
@@ -117,6 +145,8 @@
                 </div>
             </div>
         </div> 
+		
+	
     </body>
     <script>
       layui.use(['laydate','form'], function(){
@@ -176,8 +206,21 @@
       function member_del(obj,id){
           layer.confirm('确认要删除吗？',function(index){
               //发异步删除数据
-              $(obj).parents("tr").remove();
-              layer.msg('已删除!',{icon:1,time:1000});
+			  $.ajax({
+                        url:"/staff_del/"+id,
+                        type:"post",
+                        //发送请求成功后执行
+                        success:function (data) {
+                           if(data=="1"){
+								$(obj).parents("tr").remove();
+								layer.msg('已删除!',{icon:1,time:1000});
+                           }
+                        },
+                        error:function () {
+                            alert("删除失败！")
+                        }
+                    });
+              
           });
       }
 
