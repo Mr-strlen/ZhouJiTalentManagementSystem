@@ -89,39 +89,6 @@ def Welcome():
 @app.route("/login")
 def Login():
     return render_template("login.html")
-#    return redirect(url_for("hi"))
-'''
-## session 样例 储存信息 读取信息并进行判断
-@app.route("/admin")
-def admin():
-    if "logged_in" not in session:
-        abort(403)
-    return "welcome to admin page"
-## 读取session 并做不同判断
-@app.route("/hi")
-def hi():
-    name = request.args.get("name")
-    if name is None:
-        # 从cookie中取值
-        name = request.cookies.get("name", "default")
-        response = "<h1>hi, %s</h1>" % name
-        # 根据用户的不同状态返回不同的内容
-        print("session: %s" % session)
-        print("type(session): %s" % type(session))
-        print("session.get('logged_in'): %s" % session.get('logged_in'))
-    if 'logged_in' in session:
-        response += "<p>[Authenticated]</p>"
-    else:
-        response += "<p>[Not Authenticated]</p>"
-    return response
-
-## session 登出
-@app.route("/logout")
-def logout():
-    if "logged_in" in session:
-        session.pop("logged_in")
-    return redirect(url_for("hi"))
-'''
 
 @app.route("/checklogin",methods=['GET', 'POST'])
 def CheckLogin():
@@ -143,6 +110,7 @@ def CheckLogin():
             return render_template("login.html")
 
 # 1.2 注册流程
+# 1.2.1 普通HR
 @app.route("/register",methods=['GET', 'POST'])
 def Register():
     if request.method == 'POST':
@@ -156,6 +124,12 @@ def Register():
         db.session.commit()
         return "1"
     return render_template("register.html")
+
+# 1.2.2 公司COO
+@app.route("/COOregister")
+def COORegister():
+    return render_template("COOregister.html")
+
 
 # 系统主页
 @app.route("/index")
@@ -224,6 +198,11 @@ def StaffChange():
 @app.route("/staff_leave")
 def StaffLeave():
     return render_template("staff_leave.html")
+
+# 2.5 员工评价
+@app.route("/staff_comment")
+def StaffComment():
+    return render_template("staff_comment.html")
 
 ## 3. 未就业员工处理 - 员工联盟
 # 3.1  查询未就业人员 - 待业员工
