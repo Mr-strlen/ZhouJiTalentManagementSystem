@@ -163,6 +163,34 @@ def IndexPage():
 # 2.1 建立档案 - 新人报道
 @app.route("/staff_add")
 def StaffAdd():
+    if request.method == 'POST':
+        username = request.form.get("username")
+        sexual = request.form.get("sexual")
+        id = request.form.get("id")
+        origin = request.form.get("origin")
+        # nation = request.form.get("nation")
+        gladuate_college = request.form.get("gladuate_college")
+        major = request.form.get("major")
+        degree = request.form.get("degree")
+        marriage = request.form.get("marriage")
+        politic = request.form.get("politic")
+        phone = request.form.get("phone")
+        unit = request.form.get("unit")
+        # section = request.form.get("section")
+        duty = request.form.get("duty")
+        # into_date = request.form.get("into_date")
+        # contract_date = request.form.get("contract_date")
+        # born_date = request.form.get("born_date")
+        # achievement = request.form.get("achievement")
+        history_unit = request.form.get("history_unit")
+        years = request.form.get("years")
+        print(request.method)
+        print(username,sexual,id,origin,gladuate_college,major,degree,marriage,politic,phone,unit,duty,history_unit,years)
+
+        staff_info = Staff_Info(username, sexual, unit, phone, id, duty, years,origin , gladuate_college, major, degree, marriage, politic, history_unit)
+        db.session.add(staff_info)
+        db.session.commit()
+        return "1"
     return render_template("staff_add.html")
 
 # 2.2 档案查询 - 员工群落
