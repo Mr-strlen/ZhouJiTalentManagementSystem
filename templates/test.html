@@ -1,0 +1,149 @@
+<div class="container-fluid">
+     <div class="row">
+         <div class="col-lg-12">
+ 
+             <div class="card">
+                 <div class="card-body" style="height: 128px">
+                     <form class="form-horizontal" method="get" action="test1">
+ 
+                         <div class="form-group">
+                             <label style="font-size:16px;float:left ;Width: 100px;margin-top:7px;">&nbsp;&nbsp;&nbsp;&nbsp;时间:&nbsp;&nbsp;</label>
+                             <input class="form-control js-datetimepicker" style="Width: 180px;float:left ;"
+                                    type="text" id="start_time"
+                                    name="start_time" placeholder="请选择具体时间" data-side-by-side="false"
+                                    value="{% if start_time %}{{ start_time }}{% endif %}"
+                                    data-locale="zh-cn" data-format="YYYY-MM-DD HH:mm"/>
+                             <input class="form-control js-datetimepicker" style="Width: 180px;float:left ;"
+                                    type="text"
+                                    id="end_time"
+                                    name="end_time" placeholder="请选择具体时间" data-side-by-side="false"
+                                    value="{% if end_time %}{{ end_time }}{% endif %}"
+                                   data-locale="zh-cn" data-format="YYYY-MM-DD HH:mm"/>
+
+                            <label style="font-size:16px;float:left ;Width: 100px;margin-top:7px;">&nbsp;&nbsp;&nbsp;&nbsp;输入框:&nbsp;&nbsp;</label>
+                            <input class="form-control" style="font-size:16px;float:left ;Width: 100px;"
+                                   type="text1" id="text1" name="text1" value="{% if text1 %}{{ text1 }}{% endif %}"
+                                   maxlength=20 placeholder="输入内容">
+ 
+
+                            <label style="font-size:16px;float:left ;Width: 65px;margin-top:6px;">&nbsp;&nbsp;&nbsp;&nbsp;结果:</label>
+                             <div style="font-size:16px;float:left ;">
+                                 <select class="form-control" id="result" name="result" size="1"
+                                         style="float:left ;Width: 83px">
+                                     <option value="ALL" {% if result == "ALL" %}selected="selected" {% endif %}>
+                                         ALL
+                                     </option>
+                                     <option value="PASS" {% if result == "PASS" %}
+                                             selected="selected" {% endif %}>PASS
+                                     </option>
+                                     <option value="FAIL" {% if result == "FAIL" %}
+                                             selected="selected" {% endif %}>FAIL
+                                     </option>
+                                 </select>
+                             </div>
+ 
+                         </div>
+ 
+                         <div class="form-group" style="float:right ;">
+                             <button class="btn btn-primary" type="submit" style=""
+                                     id='search'>查询
+                             </button>
+                         </div>
+ 
+                     </form>
+
+                 </div>
+ 
+                 <div class="card-body">
+ 
+                     <div class="table-responsive">
+                         <table class="table table-bordered">
+                             <thead>
+                             <tr>
+                                 <th>ID</th>
+                                 <th>内容1</th>
+                                 <th>内容2</th>
+                                 <th>内容3</th>
+                                 <th>内容3</th>
+                                 <th>内容3</th>
+                                 <th>时间</th>
+                                 <th>明细</th>
+                             </tr>
+                             </thead>
+                             <tbody>
+                             {% for v in page_data %}
+                                 <tr>
+                                     <td>{{ v.id }}</td>
+                                     <td>{{ v.test1 }}</td>
+                                     <td>{{ v.test2 }}</td>
+                                     <td>{% if v.result =='PASS' %}<font class="text-success">{% else %}
+                                         <font class="text-pink">{% endif %}{{ v.result }}</font></td>
+                                     <td>{{ v.test3 }}</td>
+                                     <td>{% if v.test4 == None %}{{ '' }}{% else %}
+                                         {{ v.test4 }}{% endif %}</td>
+                                     <td>{{ v.datetime }}</td>
+                                     <td>
+                                         <div class="btn-group">
+                                             <button type="button" class="btn btn-primary" data-toggle="modal"
+                                                     id='cases-auto-detail' data-target="#exampleModal"
+                                                     data-whatever={{ v.id }}>明细
+                                             </button>
+                                         </div>
+                                     </td>
+                                 </tr>
+ 
+                             {% endfor %}
+                             </tbody>
+                         </table>
+ 
+ 
+                     </div>
+                 </div>
+             </div>
+         </div>
+ 
+     </div>
+     <ul class="pagination">
+         {% set offset = (offset)|int %}
+         {% set limit = (limit)|int %}
+         {% set count = (count)|int %}
+         {% set current_page = (offset/limit)|int + (1 if offset%limit else 0) %}
+         {% set total_page = (count/limit)|int + (1 if count%limit else 0) %}
+         <li class="{{ "disabled" if current_page - 1 <= 0 else "" }}">
+             <a href="
+                     {% if current_page>1 %}{{ url_for('test1', start_time=start_time,end_time=end_time,text1=text1, result=result,offset=(current_page-1)*limit, limit=limit) }}{% endif %}">&laquo;</a>
+         </li>
+ 
+         {% set prev = 0 %}
+         {% for i in range(0, (total_page)|int) %}
+             {% if (i-0)|abs < 2 or (i-total_page)|abs < 3 or -2 < i-current_page < 5 %}
+                 {% set prev = i %}
+                 <li class="{% if i == current_page %}active{% endif %}">
+                     <a
+                             href="{{ url_for('test1', start_time=start_time,end_time=end_time, text1=text1, result=result, offset=i*limit, limit=limit) }}">{{ i + 1 }}</a>
+                 </li>
+ 
+             {% elif prev == i-1 %}
+                 <li class="disabled"><a>…</a></li>
+ 
+             {% endif %}
+         {% endfor %}
+         <li class="{{ "disabled" if current_page + 1 >= total_page else "" }}">
+             <a href="
+                     {% if current_page + 1<total_page %}{{ url_for('test1', start_time=start_time,end_time=end_time, text1=text1, result=result, offset=(current_page + 1)*limit, limit=limit) }}{% endif %}">&raquo;</a>
+         </li>
+     </ul>
+ </div>
+ 
+ #js路径根据实际路径填写
+    <script type="text/javascript" src="static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/perfect-scrollbar.min.js"></script>
+     <!--时间选择插件-->
+    <script src="static/js/bootstrap-datetimepicker/moment.min.js"></script>
+    <script src="static/js/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js"></script>
+    <script src="static/js/bootstrap-datetimepicker/locale/zh-cn.js"></script>
+     <!--日期选择插件-->
+    <script src="static/js/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+	<script src="static/js/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script type="text/javascript" src="static/js/main.min.js"></script>

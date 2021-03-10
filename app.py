@@ -12,6 +12,20 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
 
+# 企业公司表
+class Company(db.Model):
+    # 定义表名 ZJTMS_Company
+    __tablename__ = "ZJTMS_Company"
+    # 定义字段
+    Company_Name = db.Column(db.String(20), nullable=False)
+    Boss_Id = db.Column(db.String(20), nullable=False, primary_key=True)
+    Boss_Name = db.Column(db.String(30))
+
+
+    def __init__(self, name, boss_id, boss_name):
+        self.Company_Name = name
+        self.Boss_Id = boss_id
+        self.Boss_Name = boss_name
 #  管理员表
 class Manager_Info(db.Model):
      #定义表名 ZJTMS_Manager_Info
@@ -151,8 +165,14 @@ def StaffAdd():
     return render_template("staff_add.html")
 
 # 2.2 档案查询 - 员工群落
-@app.route("/staff_list")
+@app.route("/staff_list",methods=['GET', 'POST'])
 def StaffList():
+    if request.method == 'POST':
+        name = request.form.get("username")
+        temp = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == name).all()
+        for v in temp:
+            print(v.Staff_Name)
+        return render_template("staff_list.html",rangeid=0,page_data=temp)
     return render_template("staff_list.html")
 
 # 2.3 档案修改（勘误）
