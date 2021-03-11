@@ -17,7 +17,7 @@ class Company(db.Model):
     # 定义表名 ZJTMS_Company
     __tablename__ = "ZJTMS_Company"
     # 定义字段
-    Company_Name = db.Column(db.String(20), nullable=False, primary_key=True)
+    Company_Name = db.Column(db.String(20), nullable=False)
     Boss_Id = db.Column(db.String(20), nullable=False, primary_key=True)
     Boss_Name = db.Column(db.String(30), nullable=True)
 
@@ -78,6 +78,42 @@ class Staff_Info(db.Model):
         self.Staff_Politic = politic
         self.Staff_HistoryUnit = historyUnit
 
+#  员工评价表
+class Staff_Comment(db.Model):
+     #定义表名 ZJTMS_Manager_Info
+     __tablename__ = "ZJTMS_Staff_Comment"
+     # 定义字段
+     Staff_Id = db.Column(db.String(20), nullable=False)
+     Manager_Id = db.Column(db.String(20), nullable=False)
+     Comments = db.Column(db.String(255), nullable=False)
+     Comments_Time = db.Column(db.DateTime, nullable=False, primary_key=True)
+
+     def __init__(self, s_id, m_id, comments, time):
+         self.Staff_Id = s_id
+         self.Manager_Id = m_id
+         self.Comments = comments
+         self.Comments_Time = time
+
+
+#  调档申请记录表
+class Staff_InfoReply(db.Model):
+     #定义表名 ZJTMS_Manager_Info
+     __tablename__ = "ZJTMS_Staff_InfoReply"
+     # 定义字段
+     ReplyManager_Id = db.Column(db.String(20), nullable=False)
+     TargetCompany_Name = db.Column(db.String(20), nullable=False)
+     Reply_Time=db.Column(db.DateTime,nullable=False, primary_key=True)
+     Reply_Status=db.Column(db.Integer,nullable=False)
+     Reply_Reason = db.Column(db.String(255), nullable=True)
+     Comfirm_Id = db.Column(db.String(20), nullable=True)
+
+     def __init__(self, m_id, company, time, status, reason, c_id):
+         self.ReplyManager_Id = m_id
+         self.TargetCompany_Name = company
+         self.Reply_Time = time
+         self.Reply_Status = status
+         self.Reply_Reason = reason
+         self.Comfirm_Id = c_id
 
 # 初始欢迎页
 @app.route("/")
@@ -293,8 +329,12 @@ def StaffLeave():
     return render_template("staff_leave.html")
 
 # 2.5 员工评价
-@app.route("/staff_comment")
-def StaffComment():
+@app.route("/staff_comment/<id>",methods=['GET', 'POST'])
+def StaffComment(id):
+    staff_id=id
+    manageer_id=session.get("identity")
+    #if request.method == 'POST':
+
     return render_template("staff_comment.html")
 
 ## 3. 未就业员工处理 - 员工联盟
@@ -342,4 +382,5 @@ def welcome():
     return render_template("welcome.html")
 
 if __name__ == '__main__':
+    db.create_all()
     app.run(port=5000)

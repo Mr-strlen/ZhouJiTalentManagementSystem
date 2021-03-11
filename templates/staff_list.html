@@ -102,6 +102,10 @@
 										  <a title="删除" onclick="member_del(this,{{s.Staff_Identify}})" href="javascript:;">
 											<i class="layui-icon">&#xe640;</i>
 										  </a>
+										  <a title="员工评价" onclick="xadmin.open('{{s.Staff_Name}}新增评价','/staff_comment/{{s.Staff_Identify}}',600,400)"  href="javascript:;">
+											<i class="layui-icon">&#xe68e;</i>
+										  </a>
+										  
 										</td>
 									 </tr>
 								{% endfor %}
