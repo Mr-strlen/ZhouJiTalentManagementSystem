@@ -17,9 +17,9 @@ class Company(db.Model):
     # 定义表名 ZJTMS_Company
     __tablename__ = "ZJTMS_Company"
     # 定义字段
-    Company_Name = db.Column(db.String(20), nullable=False)
+    Company_Name = db.Column(db.String(20), nullable=False, primary_key=True)
     Boss_Id = db.Column(db.String(20), nullable=False, primary_key=True)
-    Boss_Name = db.Column(db.String(30))
+    Boss_Name = db.Column(db.String(30), nullable=True)
 
     def __init__(self, name, boss_id, boss_name):
         self.Company_Name = name
@@ -31,7 +31,7 @@ class Manager_Info(db.Model):
      #定义表名 ZJTMS_Manager_Info
      __tablename__ = "ZJTMS_Manager_Info"
      # 定义字段
-     Manager_Id = db.Column(db.String(20),nullable=False,primary_key=True)
+     Manager_Id = db.Column(db.String(20),nullable=False, primary_key=True)
      Manager_Mail = db.Column(db.String(50),nullable=False)
      Manager_Pwd=db.Column(db.String(20),nullable=False)
      Manager_Permission=db.Column(db.String(20),nullable=False)
@@ -136,6 +136,23 @@ def Register():
         pwd = request.form.get("password")
         permission = "N"
         # print(name, email, pwd, permission)
+
+        # 已经存在账号
+        temp = db.session.query(Manager_Info).filter(Manager_Info.Manager_Id == name).all()
+        if len(temp) > 0:
+            return "2"
+        # 邮箱重复
+        temp = db.session.query(Manager_Info).filter(Manager_Info.Manager_Mail == email).all()
+        if len(temp) > 0:
+            return "5"
+        # 员工不存在
+        temp = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == name).all()
+        if len(temp) > 0: # 员工不为HR
+            if temp[0].Staff_Duty != "HR":
+                return "4"
+        else:
+            return "3"
+
         manager_info = Manager_Info(name, email, pwd, permission)
         db.session.add(manager_info)
         db.session.commit()
@@ -153,6 +170,16 @@ def COORegister():
         pwd = request.form.get("password")
         permission = "S"
         # print(name, realname, company, email, pwd, permission)
+
+        # 公司已经注册
+        temp = db.session.query(Company).filter(Company.Company_Name == company).all()
+        if len(temp) > 0:
+            return "2"
+        # 邮箱重复
+        temp = db.session.query(Manager_Info).filter(Manager_Info.Manager_Mail == email).all()
+        if len(temp) > 0:
+            return "3"
+
         # 公司信息建立
         new_company= Company(company, name, realname)
         # 账户信息建立
@@ -161,6 +188,7 @@ def COORegister():
         db.session.commit()
         db.session.add(manager_info)
         db.session.commit()
+
         return "1"
     return render_template("COOregister.html")
 
