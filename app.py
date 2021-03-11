@@ -393,9 +393,26 @@ def UnemployHistoryComment(id):
 
 ## 4 跨公司申请
 # 4.1 HR提出申请
-@app.route("/staffinfo_reply") #烺
+@app.route("/staffinfo_reply",methods=['GET', 'POST']) #烺
 def staffInfoReply():
-    return render_template("staffinfo_reply.html")
+    # 获取Company 表的公司数据
+    company_lists = db.session.query(Company).all()
+    permission = session.get("permission")
+    if request.method == 'POST' and permission == 'S':
+        return "2"
+    if  request.method == 'POST' and permission=='N':
+        reply_id = request.form.get("reply_id")
+        reply_company = request.form.get("reply_company")
+        reply_date = request.form.get("reply_date")
+        reply_reason = request.form.get("reply_reason")
+        reply_status = "0"
+        reply_confirmid = ""
+        print(reply_id, reply_company, reply_date, reply_reason)
+        staffinfo_reply = Staff_InfoReply(reply_id,reply_company,reply_date,reply_status,reply_reason,reply_confirmid)
+        db.session.add(staffinfo_reply)
+        db.session.commit()
+        return "1"
+    return render_template("staffinfo_reply.html",company_lists=company_lists)
 # 4.2 COO批复申请
 @app.route("/staffinfo_confirm") #飞
 def StaffInfoConfirm():
