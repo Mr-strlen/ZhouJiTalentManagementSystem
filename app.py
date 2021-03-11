@@ -108,19 +108,19 @@ def CheckLogin():
         print(temp)
         if len(temp) > 0:
             session["logged_in"] = True # 登录状态
-            session["identify"] = temp[0].Manager_Id # 登录id
+            session["identity"] = temp[0].Manager_Id # 登录id
             # 匹配身份
             t=db.session.query(Company).filter(Company.Boss_Id == name).all()
             if len(t) > 0:  # 为COO
-                session["username"] = t[0].Boss_Name
+                session["realname"] = t[0].Boss_Name
                 session["company"] = t[0].Company_Name
-                session["permissions"] = "S"
+                session["permission"] = "S"
                 return render_template("index.html", username=t[0].Boss_Name)
             else:
                 ti = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == name).first()
-                session["username"] = ti.Staff_Name
+                session["realname"] = ti.Staff_Name
                 session["company"] = ti.Staff_Unit
-                session["permissions"] = "N"
+                session["permission"] = "N"
                 return render_template("index.html", username=ti.Staff_Name)
         else:
             flash('用户名或密码错误')
@@ -168,7 +168,7 @@ def COORegister():
 # 系统主页
 @app.route("/index")
 def IndexPage():
-    username = request.cookies.get("identify", "默认用户")
+    username = request.cookies.get("identity", "默认用户")
     return render_template("index.html", username=username)
 
 ## 2. 员工档案管理
@@ -295,6 +295,14 @@ def UnemployList():
 
     return render_template("unemploy_list.html", page_data=temp, username=username, degree=degree, rangeid=0,
                            offset=offset, limit=limit, count=count)
+
+@app.route("/staffinfo_reply") #烺
+def staffInfoReply():
+    return render_template("staffinfo_reply.html")
+
+@app.route("/staffinfo_confirm") #飞
+def StaffInfoConfirm():
+    return render_template("staffinfo_confirm.html")
 
 @app.route("/welcome")
 def welcome():
