@@ -467,10 +467,13 @@ def StaffCommentAdd():
         hardworking = request.form.get("hardworking")
         efficiency = request.form.get("efficiency")
         time = datetime.datetime.today()
-        print(manager_id, staff_id, comments, leadership,creativity,communication,hardworking,efficiency)
+        print(manager_id, staff_id, comments, leadership, creativity, communication, hardworking, efficiency)
         staff_comment = Staff_Comment(staff_id, manager_id, comments, time)
-        #db.session.add(staff_comment)
-        #db.session.commit()
+        staff_stars = Staff_Stars(staff_id, manager_id, leadership, creativity, communication, hardworking, efficiency, time)
+        db.session.add(staff_comment)
+        db.session.commit()
+        db.session.add(staff_stars)
+        db.session.commit()
         return "1"
 
 # 6 推荐系统
