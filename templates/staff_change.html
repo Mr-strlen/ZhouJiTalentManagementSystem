@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    <head>
+        <meta charset="UTF-8">
+        <title>ZhouJiTalentedMS-个人主页</title>
+        <meta name="renderer" content="webkit">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+        <link rel="stylesheet" href="../static/css/font.css">
+        <link rel="stylesheet" href="../static/css/xadmin.css">
+        <script type="text/javascript" src="../static/lib/layui/layui.js" charset="utf-8"></script>
+        <script type="text/javascript" src="../static/js/xadmin.js"></script>
+        <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+        <!--[if lt IE 9]>
+            <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+            <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]--></head>
+
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row">
+                <form method="post" class="layui-form">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">身份证号</label>
+                        <div class="layui-input-inline">  <!-- 当前身份证号的展示框-->
+                            <input type="text" value={{person.Staff_Identify}} id="identity" autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">
+                            <input type="text" placeholder="不可修改" autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                    </div>
+
+
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">员工姓名</label>
+                        <div class="layui-input-inline">  <!-- 姓名的展示框-->
+                            <input type="text" value={{person.Staff_Name}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">  <!-- 姓名的修改框-->
+                            <input type="text" id="realname" name="realname" placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-inline">  <!-- 性别的展示框-->
+                            <input type="text" value={{person.Staff_Sex}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                         <div class="layui-input-inline">  <!-- 性别的修改框-->
+                            <input type="text" id="sexual" name="sexual" placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">所在公司</label>
+                        <div class="layui-input-inline">  <!-- 公司的展示框-->
+                            <input type="text"  value={{person.Staff_Unit}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                         <div class="layui-input-inline">  <!-- 公司的修改框-->
+                            <input type="text" placeholder="不可修改" autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">联系方式</label>
+                        <div class="layui-input-inline">   <!-- 联系方式的展示框-->
+                            <input type="text" value={{person.Staff_Phone}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">   <!-- 联系方式的修改框-->
+                            <input type="text" id="phone" name="phone" placeholder="" autocomplete="off" class="layui-input">
+				 	    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">年龄</label>
+                        <div class="layui-input-inline">  <!-- 年龄的修改框-->
+                            <input type="text" value={{person.Staff_Years}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">  <!-- 年龄的修改框-->
+                            <input type="text"  id="years" name="years" placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">职务</label>
+                        <div class="layui-input-inline">  <!-- 修改框-->
+                            <input type="text" value={{person.Staff_Duty}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">  <!-- 修改框-->
+                            <input type="text"  id="duty" name="duty" placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">籍贯</label>
+                        <div class="layui-input-inline">  <!-- 籍贯的展示框-->
+                            <input type="text" value={{person.Staff_Origin}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">   <!-- 籍贯的修改框-->
+                            <input type="text"  id="origin" name="origin" placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">毕业院校</label>
+                        <div class="layui-input-inline">  <!-- 院校的展示框-->
+                            <input type="text" value={{person.Staff_GraduateCollege}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">  <!-- 院校的展示框-->
+                            <input type="text"  id="graduate_college" name="graduate_college"  placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">专业</label>
+                        <div class="layui-input-inline">  <!-- 展示框-->
+                            <input type="text" value={{person.Staff_Major}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">  <!-- 修改框-->
+                            <input type="text"  id="major" name="major" placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">学历</label>
+                        <div class="layui-input-inline">   <!-- 展示框-->
+                            <input type="text" value={{person.Staff_Degree}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">   <!-- 修改框-->
+                            <input type="text"  id="degree" name="degree" placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">婚姻状况</label>
+                        <div class="layui-input-inline">   <!-- 展示框-->
+                            <input type="text" value={{person.Staff_Marrige}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">   <!-- 修改框-->
+                            <input type="text"  id="marriage" name="marriage" placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+					<div class="layui-form-item">
+                        <label class="layui-form-label">政治面貌</label>
+                        <div class="layui-input-inline">   <!-- 展示框-->
+                            <input type="text" value={{person.Staff_Politic}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">   <!-- 修改框-->
+                            <input type="text"  id="politic" name="politic"  placeholder="" autocomplete="off" class="layui-input">
+					    </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">历史所属公司</label>
+                        <div class="layui-input-inline">   <!-- 展示框-->
+                            <input type="text" value={{person.Staff_HistoryUnit}} autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                        <div class="layui-input-inline">   <!-- 修改框-->
+                            <input type="text"  id="historyUnit" name="historyUnit"  placeholder="不可修改" autocomplete="off" class="layui-input" readonly="true">
+					    </div>
+                    </div>
+
+                     <div class="layui-card-header">  <!-- 确认修改框-->
+                         <button class="layui-btn" lay-filter="change" lay-submit="" type="submit">确认</button>
+                     </div>
+                </form>
+            </div>
+        </div>
+        <script>layui.use(['form', 'layer'],
+            function() {
+                $ = layui.jquery;
+                var form = layui.form,
+                layer = layui.layer;
+
+                //自定义验证规则
+                form.verify({
+                    nikename: function(value) {
+                        if (value.length < 5) {
+                            return '昵称至少得5个字符啊';
+                        }
+                    },
+                    pass: [/(.+){6,12}$/, '密码必须6到12位'],
+                    repass: function(value) {
+                        if ($('#L_pass').val() != $('#L_repass').val()) {
+                            return '两次密码不一致';
+                        }
+                    }
+                });
+
+                //监听提交
+                form.on('submit(change)',
+                function(data) {
+                    console.log(data);
+                    //发异步，把数据提交给后端
+                    $.ajax({
+                        url:"/staff_edit",
+                        type:"post",
+                        data:"realname="+$("#realname").val()
+                        +"&id="+$("#identity").val()
+                        +"&sexual="+$("#sexual").val()
+                        +"&origin="+$("#origin").val()
+                        +"&graduate_college="+$("#graduate_college").val()
+                        +"&major="+$("#major").val()
+                        +"&degree="+$("#degree").val()
+                        +"&marriage="+$("#marriage").val()
+                        +"&politic="+$("#politic").val()
+                        +"&phone="+$("#phone").val()
+                        +"&duty="+$("#duty").val()
+                        +"&history_unit="+$("#historyUnit").val()
+                        +"&years="+$("#years").val(),
+
+                        //发送请求成功后执行
+                        success:function (data) {
+                           if(data=="1"){
+                               layer.alert("修改成功！", {
+                                   icon: 6
+                                   },
+                                   function() {
+                                        //关闭当前frame
+                                        xadmin.close();
+                                        // 可以对父窗口进行刷新
+                                        xadmin.father_reload();
+                               });
+                           }
+                           else if(data=="2"){
+                           alert("修改失败！")
+                           }
+                        },
+                        error:function () {
+                            alert("请求失败！")
+                        }
+                    });
+                    return false;
+                });
+
+            });</script>
+        <script>var _hmt = _hmt || []; (function() {
+                var hm = document.createElement("script");
+                hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(hm, s);
+            })();</script>
+    </body>
+
+</html>

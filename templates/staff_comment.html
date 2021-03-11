@@ -116,7 +116,12 @@
 				$.ajax({
 					url:"/staff_commentadd",
 					type:"post",
-					data:"comments="+$("#L_comments").val()+"&staff_id="+$("#L_staffid").val()+"&leadership="+$("input:radio[name='Leadership']:checked").val(),
+					data:"comments="+$("#L_comments").val()+"&staff_id="+$("#L_staffid").val()
+					+"&leadership="+$("input:radio[name='Leadership']:checked").val()
+					+"&creativity="+$("input:radio[name='Creativity']:checked").val()
+					+"&communication="+$("input:radio[name='Communication']:checked").val()
+					+"&hardworking="+$("input:radio[name='Hardworking']:checked").val()
+					+"&efficiency="+$("input:radio[name='Efficiency']:checked").val(),
 					//发送请求成功后执行
 					success:function (data) {
 					   if(data=="1"){

@@ -336,9 +336,55 @@ def StaffDel(id):
     return data
 
 # 2.3 档案修改（勘误）
-@app.route("/staff_change")
-def StaffChange():
-    return render_template("staff_change.html")
+@app.route("/staff_change/<id>")
+def StaffChange(id):
+    temp = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == id).all()
+    return render_template("staff_change.html", person=temp[0])
+
+
+@app.route("/staff_edit",methods=['GET', 'POST'])
+def StaffEdit():
+    if request.method == 'POST':
+        realname = request.form.get("realname", "", str)
+        sexual = request.form.get("sexual", "", str)
+        phone = request.form.get("phone", "", str)
+        years = request.form.get("years", "", str)
+        duty = request.form.get("duty", "", str)
+        origin = request.form.get("origin", "", str)
+        graduate_college = request.form.get("graduate_college", "", str)
+        major = request.form.get("major", "", str)
+        degree = request.form.get("degree", "", str)
+        marriage = request.form.get("marriage", "", str)
+        politic = request.form.get("politic", "", str)
+        id = request.form.get("id")
+        print(realname, sexual, id)
+        temp = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == id).all()
+
+        # 属性是否为空判断，非空则给该ID的数据项直接赋值修改
+        if len(sexual) > 0:
+            temp[0].Staff_Sex = sexual
+        if len(realname) > 0:
+            temp[0].Staff_Name = realname
+        if len(phone) > 0:
+             temp[0].Staff_Phone = phone
+        if len(years) > 0:
+            temp[0].Staff_Years = years
+        if len(duty) > 0:
+             temp[0].Staff_Duty = duty
+        if len(origin) > 0:
+            temp[0].Staff_Origin = origin
+        if len(graduate_college) > 0:
+            temp[0].Staff_GraduateCollege = graduate_college
+        if len(major) > 0:
+            temp[0].Staff_Major = major
+        if len(degree) > 0:
+            temp[0].Staff_Degree = degree
+        if len(marriage) > 0:
+            temp[0].Staff_Marrige = marriage
+        if len(politic) > 0:
+            temp[0].Staff_Politic = politic
+        db.session.commit()
+        return "1"
 
 # 2.4 档案修改（离职） - 员工离职
 @app.route("/staff_leave")
@@ -416,8 +462,12 @@ def StaffCommentAdd():
         staff_id = request.form.get("staff_id")
         comments = request.form.get("comments")
         leadership = request.form.get("leadership")
+        creativity = request.form.get("creativity")
+        communication = request.form.get("communication")
+        hardworking = request.form.get("hardworking")
+        efficiency = request.form.get("efficiency")
         time = datetime.datetime.today()
-        print(manager_id, staff_id, comments, leadership)
+        print(manager_id, staff_id, comments, leadership,creativity,communication,hardworking,efficiency)
         staff_comment = Staff_Comment(staff_id, manager_id, comments, time)
         #db.session.add(staff_comment)
         #db.session.commit()
