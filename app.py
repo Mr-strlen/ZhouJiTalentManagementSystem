@@ -135,7 +135,7 @@ def Register():
         email = request.form.get("usermail")
         pwd = request.form.get("password")
         permission = "N"
-        print(name, email, pwd, permission)
+        # print(name, email, pwd, permission)
         manager_info = Manager_Info(name, email, pwd, permission)
         db.session.add(manager_info)
         db.session.commit()
@@ -152,7 +152,7 @@ def COORegister():
         email = request.form.get("usermail")
         pwd = request.form.get("password")
         permission = "S"
-        print(name, realname, company, email, pwd, permission)
+        # print(name, realname, company, email, pwd, permission)
         # 公司信息建立
         new_company= Company(company, name, realname)
         # 账户信息建立
@@ -164,11 +164,10 @@ def COORegister():
         return "1"
     return render_template("COOregister.html")
 
-
 # 系统主页
 @app.route("/index")
 def IndexPage():
-    username = request.cookies.get("identity", "默认用户")
+    username = session.get("identity", "默认用户")
     return render_template("index.html", username=username)
 
 ## 2. 员工档案管理
@@ -192,7 +191,7 @@ def StaffAdd():
         phone = request.form.get("phone")
         unit = request.form.get("unit")
         duty = request.form.get("duty")
-        history_unit = request.form.get("history_unit")
+        history_unit = request.form.get("history_unit", "", str)
         years = request.form.get("years")
         #print(request.method)
         #print(username,sexual,id,origin,gladuate_college,major,degree,marriage,politic,phone,unit,duty,history_unit,years)
@@ -211,7 +210,13 @@ def StaffList():
     offset = request.args.get('offset', 0, int)
     limit = request.args.get('limit', 10, int)
 
-    search_str = ""
+    company = session.get("company")
+    permission = session.get("permission")
+    search_str = "Staff_Info.Staff_Unit == company," #必须为自己公司的员工
+
+    if permission == "N": #Hr不能看到同为Hr的信息
+        search_str = search_str + "Staff_Info.Staff_Duty != HR,"
+
     # 属性是否为空判断，拼接搜索条件
     if len(username) > 0:
         search_str = search_str + "Staff_Info.Staff_Identify == username,"
