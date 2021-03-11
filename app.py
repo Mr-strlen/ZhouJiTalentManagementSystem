@@ -296,7 +296,7 @@ def StaffList():
     search_str = "Staff_Info.Staff_Unit == company," #必须为自己公司的员工
 
     if permission == "N": #Hr不能看到同为Hr的信息
-        search_str = search_str + "Staff_Info.Staff_Duty != HR,"
+        search_str = search_str + "Staff_Info.Staff_Duty != 'HR',"
 
     # 属性是否为空判断，拼接搜索条件
     if len(username) > 0:
