@@ -96,15 +96,32 @@ def CheckLogin():
         name = request.form.get("username")
         pwd = request.form.get("password")
         print(name, pwd)
-        temp=db.session.query(Manager_Info).filter(Manager_Info.Manager_Id == name, Manager_Info.Manager_Pwd == pwd).all()
+        # 匹配密码
+        # 邮箱登录
+        if '@' in name:
+            temp = db.session.query(Manager_Info).filter(Manager_Info.Manager_Mail == name, Manager_Info.Manager_Pwd == pwd).all()
+            if len(temp) > 0:
+                name=temp[0].Manager_Id
+        # 身份证号登录
+        else:
+            temp = db.session.query(Manager_Info).filter(Manager_Info.Manager_Id == name, Manager_Info.Manager_Pwd == pwd).all()
         print(temp)
         if len(temp) > 0:
-            # 写入到session中
-            session["logged_in"] = True
-            session["identify"] = temp[0].Manager_Id
-            # session["username"] = True
-            session["permissions"] = "N" #权限判断在COO加入之后需要修改
-            return render_template("index.html",username=temp[0].Manager_Id)
+            session["logged_in"] = True # 登录状态
+            session["identify"] = temp[0].Manager_Id # 登录id
+            # 匹配身份
+            t=db.session.query(Company).filter(Company.Boss_Id == name).all()
+            if len(t) > 0:  # 为COO
+                session["username"] = t[0].Boss_Name
+                session["company"] = t[0].Company_Name
+                session["permissions"] = "S"
+                return render_template("index.html", username=t[0].Boss_Name)
+            else:
+                ti = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == name).first()
+                session["username"] = ti.Staff_Name
+                session["company"] = ti.Staff_Unit
+                session["permissions"] = "N"
+                return render_template("index.html", username=ti.Staff_Name)
         else:
             flash('用户名或密码错误')
             return render_template("login.html")
@@ -126,8 +143,25 @@ def Register():
     return render_template("register.html")
 
 # 1.2.2 公司COO
-@app.route("/COOregister")
+@app.route("/COOregister",methods=['GET', 'POST'])
 def COORegister():
+    if request.method == 'POST':
+        name = request.form.get("username")
+        realname = request.form.get("realname")
+        company =request.form.get("company")
+        email = request.form.get("usermail")
+        pwd = request.form.get("password")
+        permission = "S"
+        print(name, realname, company, email, pwd, permission)
+        # 公司信息建立
+        new_company= Company(company, name, realname)
+        # 账户信息建立
+        manager_info = Manager_Info(name, email, pwd, permission)
+        db.session.add(new_company)
+        db.session.commit()
+        db.session.add(manager_info)
+        db.session.commit()
+        return "1"
     return render_template("COOregister.html")
 
 
