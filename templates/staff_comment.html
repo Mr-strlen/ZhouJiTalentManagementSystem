@@ -42,11 +42,11 @@
 					<div class="layui-form-item">
 						<label class="layui-form-label">领导力</label>
 						<div class="layui-input-block">
-						  <input type="radio" id="L_leadership" name="Leadership" value="1" title="极差" checked=""><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon"></i><div>极差</div></div>
-						  <input type="radio" id="L_leadership" name="Leadership" value="2" title="较差"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>较差</div></div>
-						  <input type="radio" id="L_leadership" name="Leadership" value="3" title="中等"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>中等</div></div>
-						  <input type="radio" id="L_leadership" name="Leadership" value="4" title="较好"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>较好</div></div>
-						  <input type="radio" id="L_leadership" name="Leadership" value="5" title="极好"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>极好</div></div>
+						  <input type="radio" name="Leadership" value="1" title="极差" checked=""><div class="layui-unselect layui-form-radio layui-form-radioed"><i class="layui-anim layui-icon"></i><div>极差</div></div>
+						  <input type="radio" name="Leadership" value="2" title="较差"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>较差</div></div>
+						  <input type="radio" name="Leadership" value="3" title="中等"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>中等</div></div>
+						  <input type="radio" name="Leadership" value="4" title="较好"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>较好</div></div>
+						  <input type="radio" name="Leadership" value="5" title="极好"><div class="layui-unselect layui-form-radio"><i class="layui-anim layui-icon"></i><div>极好</div></div>
 						  </div>
 					</div>
 					
@@ -116,7 +116,7 @@
 				$.ajax({
 					url:"/staff_commentadd",
 					type:"post",
-					data:"comments="+$("#L_comments").val()+"&staff_id="+$("#L_staffid").val()+"&leadership="+$("#L_leadership").val(),
+					data:"comments="+$("#L_comments").val()+"&staff_id="+$("#L_staffid").val()+"&leadership="+$("input:radio[name='Leadership']:checked").val(),
 					//发送请求成功后执行
 					success:function (data) {
 					   if(data=="1"){
