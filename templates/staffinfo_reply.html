@@ -34,9 +34,8 @@
                             <table class="layui-table layui-form">
                                 <thead>
                                   <tr>
-                                    <th>ID</th>
-                                    <th>所在公司</th>
-                                    <th>申请时间</th>
+
+                                    <th>申请公司</th>
                                     <th>申请原因</th>
                                     <th>操作</th>
                                   </tr>
@@ -45,17 +44,15 @@
                                     <form method="post" class="layui-form">
                                     <div>
 									<tr>
-										<td>
-                                            <input type="text" id="ReplyManagerID" name="ReplyManagerID" required="" lay-verify="required" autocomplete="off" class="layui-input">
-                                        </td>
+
 										<td>
                                             <select id="ReplyCompany" name="ReplyCompany" class="valid">
                                                 {% for company in company_lists %}
-                                                    <option value={{ company.Company_Name }}>{{ company.Company_Name }}</option>
+                                                    <option value={{ company }}>{{ company }}</option>
                                                 {% endfor %}
                                             </select>
                                         </td>
-										<td><input type="date" id="ReplyDate" name="ReplyDate"  class="layui-input"></td>
+
 										<td><input type="text" id="ReplyReason" name="ReplyReason" required="" lay-verify="required" autocomplete="off" class="layui-input"></td>
                                         <td>
                                             <button class="layui-btn" lay-filter="add" lay-submit="">提交</button>
@@ -88,9 +85,8 @@
                     $.ajax({
                         url:"staffinfo_reply",
                         type:"post",
-                        data: "reply_id=" + $("#ReplyManagerID").val()
-                           +"&reply_company="+$("#ReplyCompany").val()+"&reply_date="+$("#ReplyDate").val()+"&reply_reason="+
-                           $("#ReplyReason").val(),
+                        data:
+                           "reply_company="+$("#ReplyCompany").val()+"&reply_reason="+ $("#ReplyReason").val(),
                         //发送请求成功后执行
                         success:function (data) {
                            if(data=="1"){

@@ -397,13 +397,21 @@ def UnemployHistoryComment(id):
 def staffInfoReply():
     # 获取Company 表的公司数据
     company_lists = db.session.query(Company).all()
+    print(type(company_lists[0]))
+    print(session.get("company"))
+    namelists = []
+    for temp in company_lists:
+        namelists.append(temp.Company_Name)
+    namelists.remove(session.get("company"))
+    print(namelists)
+    # print(company_lists.remove(session.get("company")))
     permission = session.get("permission")
     if request.method == 'POST' and permission == 'S':
         return "2"
     if  request.method == 'POST' and permission=='N':
-        reply_id = request.form.get("reply_id")
+        reply_id = session.get("identity")
         reply_company = request.form.get("reply_company")
-        reply_date = request.form.get("reply_date")
+        reply_date = datetime.datetime.today()
         reply_reason = request.form.get("reply_reason")
         reply_status = "0"
         reply_confirmid = ""
@@ -412,7 +420,7 @@ def staffInfoReply():
         db.session.add(staffinfo_reply)
         db.session.commit()
         return "1"
-    return render_template("staffinfo_reply.html",company_lists=company_lists)
+    return render_template("staffinfo_reply.html",company_lists=namelists)
 # 4.2 COO批复申请
 @app.route("/staffinfo_confirm") #飞
 def StaffInfoConfirm():
