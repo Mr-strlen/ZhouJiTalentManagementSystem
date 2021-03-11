@@ -223,11 +223,112 @@ def StaffLeave():
 # 3.1  查询未就业人员 - 待业员工
 @app.route("/unemploy_list")
 def UnemployList():
+<<<<<<< Updated upstream
     return render_template("unemploy_list.html")
+=======
+    username = request.args.get("username", '', str)
+    degree = request.args.get("degree", '', str)
+    offset = request.args.get('offset', 0, int)
+    limit = request.args.get('limit', 10, int)
+
+    search_str = "Staff_Info.Staff_Unit=='Empty',"
+    # 属性是否为空判断，拼接搜索条件
+    if len(username) > 0:
+        search_str = search_str + "Staff_Info.Staff_Identify == username,"
+    if len(degree) > 0:
+        search_str = search_str + "Staff_Info.Staff_Degree == degree,"
+
+    # 如果搜索条件为空，即为全部搜索
+    temp = []
+    if len(search_str) > 0:
+        search_str = search_str[0:-1]  # 逗号删减
+        temp = eval(
+            "db.session.query(Staff_Info).filter(" + search_str + ").order_by(Staff_Info.Staff_Identify).limit(limit).offset(offset).all()")
+        count = len(eval("db.session.query(Staff_Info).filter(" + search_str + ").all()"))
+    else:
+        temp = db.session.query(Staff_Info).order_by(Staff_Info.Staff_Identify).limit(limit).offset(offset).all()
+        count = len(db.session.query(Staff_Info).all())
+
+    print(degree, username)
+
+    return render_template("unemploy_list.html", page_data=temp, username=username, degree=degree, rangeid=0,
+                           offset=offset, limit=limit, count=count)
+
+# 嵌套在页面内 未就业员工历史评价查看
+@app.route("/unemploy_historycomment/<id>")
+def UnemployHistoryComment(id):
+    temp = db.session.query(Staff_Comment).filter(Staff_Comment.Staff_Id == id).all()
+    length=len(temp)
+    m_name=[]
+    for i in temp:
+        #print(i.Manager_Id)
+        t = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == i.Manager_Id).all()
+        m_name.append(t[0].Staff_Name)
+
+    return render_template("unemploy_historycomment.html", comments=temp, length=length, m_name=m_name)
+
+
+## 4 跨公司申请
+# 4.1 HR提出申请
+@app.route("/staffinfo_reply",methods=['GET', 'POST']) #烺
+def staffInfoReply():
+    # 获取Company 表的公司数据
+    company_lists = db.session.query(Company).all()
+    if request.method == 'POST':
+        reply_id = request.form.get("reply_id")
+        reply_company = request.form.get("reply_company")
+        reply_date = request.form.get("reply_date")
+        reply_reason = request.form.get("reply_reason")
+        reply_status = "0"
+        reply_confirmid = ""
+        print(reply_id, reply_company, reply_date, reply_reason)
+        staffinfo_reply = Staff_InfoReply(reply_id,reply_company,reply_date,reply_status,reply_reason,reply_confirmid)
+        db.session.add(staffinfo_reply)
+        db.session.commit()
+        return "1"
+    return render_template("staffinfo_reply.html",company_lists=company_lists)
+# 4.2 COO批复申请
+@app.route("/staffinfo_confirm") #飞
+def StaffInfoConfirm():
+    return render_template("staffinfo_confirm.html")
+
+# 5 评价系统
+# 5.1 HR给员工进行评价 打分
+@app.route("/staff_comment/<id>")
+def StaffComment(id):
+    print(id)
+    return render_template("staff_comment.html", staff_id=id)
+
+# 增加评价 打分
+@app.route("/staff_commentadd",methods=['GET', 'POST'])
+def StaffCommentAdd():
+    if request.method == 'POST':
+        manager_id = session.get("identity")
+        staff_id = request.form.get("staff_id")
+        comments = request.form.get("comments")
+        leadership = request.form.get("leadership")
+        time = datetime.datetime.today()
+        print(manager_id, staff_id, comments, leadership)
+        staff_comment = Staff_Comment(staff_id, manager_id, comments, time)
+        #db.session.add(staff_comment)
+        #db.session.commit()
+        return "1"
+
+# 6 推荐系统
+
+# 7 HR交流帖子系统
+
+# 系统主页
+@app.route("/index")
+def IndexPage():
+    username = session.get("identity", "默认用户")
+    return render_template("index.html", username=username)
+>>>>>>> Stashed changes
 
 @app.route("/welcome")
 def welcome():
     return render_template("welcome.html")
+
 
 if __name__ == '__main__':
     app.run(port=5000)
