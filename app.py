@@ -94,7 +94,6 @@ class Staff_Comment(db.Model):
          self.Comments = comments
          self.Comments_Time = time
 
-
 #  调档申请记录表
 class Staff_InfoReply(db.Model):
      #定义表名 ZJTMS_Manager_Info
@@ -114,6 +113,30 @@ class Staff_InfoReply(db.Model):
          self.Reply_Status = status
          self.Reply_Reason = reason
          self.Comfirm_Id = c_id
+
+# 员工星级评定表
+class Staff_Stars(db.Model):
+    # 定义表名 ZJTMS_Manager_Info
+    __tablename__ = "ZJTMS_Staff_Stars"
+    # 定义字段
+    Stuff_Id = db.Column(db.String(20), nullable=False)
+    Manager_Id = db.Column(db.String(20), nullable=False)
+    Leadership = db.Column(db.Integer, nullable=False)#领导力
+    Creativity = db.Column(db.Integer, nullable=False)#创新性
+    Communication = db.Column(db.Integer, nullable=False)#交际能力
+    Hardworking = db.Column(db.Integer, nullable=True)#勤奋度
+    Efficiency = db.Column(db.Integer, nullable=True)#工作效率
+    Comment_Time = db.Column(db.DateTime, nullable=False, primary_key=True)
+
+    def __init__(self, s_id, m_id, L1, C2, C3, H4, E5, time):
+        self.Stuff_Id = s_id
+        self.Manager_Id = m_id
+        self.Leadership = L1
+        self.Creativity = C2
+        self.Communication = C3
+        self.Hardworking = H4
+        self.Efficiency = E5
+        self.Comment_Time = time
 
 # 初始欢迎页
 @app.route("/")
@@ -228,12 +251,6 @@ def COORegister():
         return "1"
     return render_template("COOregister.html")
 
-# 系统主页
-@app.route("/index")
-def IndexPage():
-    username = session.get("identity", "默认用户")
-    return render_template("index.html", username=username)
-
 ## 2. 员工档案管理
 # 2.1 建立档案 - 新人报道
 @app.route("/staff_add",methods=['GET', 'POST'])
@@ -297,7 +314,7 @@ def StaffList():
         temp = db.session.query(Staff_Info).order_by(Staff_Info.Staff_Identify).limit(limit).offset(offset).all()
         count = len(db.session.query(Staff_Info).all())
 
-    print(degree,username)
+    print(degree, username)
 
     return render_template("staff_list.html", page_data=temp, username=username, degree=degree, rangeid=0, offset=offset, limit=limit, count=count)
 
@@ -327,24 +344,6 @@ def StaffChange():
 @app.route("/staff_leave")
 def StaffLeave():
     return render_template("staff_leave.html")
-
-# 2.5 员工评价
-@app.route("/staff_comment/<id>")
-def StaffComment(id):
-    return render_template("staff_comment.html", staff_id=id)
-
-# 增加评价
-@app.route("/staff_commentadd",methods=['GET', 'POST'])
-def StaffCommentAdd():
-    if request.method == 'POST':
-        manager_id = session.get("identity")
-        staff_id = request.form.get("staff_id")
-        comments = request.form.get("comments")
-        time = datetime.datetime.today()
-        staff_comment = Staff_Comment(staff_id, manager_id, comments, time)
-        db.session.add(staff_comment)
-        db.session.commit()
-        return "1"
 
 ## 3. 未就业员工处理 - 员工联盟
 # 3.1  查询未就业人员 - 待业员工
@@ -378,13 +377,61 @@ def UnemployList():
     return render_template("unemploy_list.html", page_data=temp, username=username, degree=degree, rangeid=0,
                            offset=offset, limit=limit, count=count)
 
+# 嵌套在页面内 未就业员工历史评价查看
+@app.route("/unemploy_historycomment/<id>")
+def UnemployHistoryComment(id):
+    temp = db.session.query(Staff_Comment).filter(Staff_Comment.Staff_Id == id).all()
+    length=len(temp)
+    m_name=[]
+    for i in temp:
+        #print(i.Manager_Id)
+        t = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == i.Manager_Id).all()
+        m_name.append(t[0].Staff_Name)
+
+    return render_template("unemploy_historycomment.html", comments=temp, length=length, m_name=m_name)
+
+
+## 4 跨公司申请
+# 4.1 HR提出申请
 @app.route("/staffinfo_reply") #烺
 def staffInfoReply():
     return render_template("staffinfo_reply.html")
-
+# 4.2 COO批复申请
 @app.route("/staffinfo_confirm") #飞
 def StaffInfoConfirm():
     return render_template("staffinfo_confirm.html")
+
+# 5 评价系统
+# 5.1 HR给员工进行评价 打分
+@app.route("/staff_comment/<id>")
+def StaffComment(id):
+    print(id)
+    return render_template("staff_comment.html", staff_id=id)
+
+# 增加评价 打分
+@app.route("/staff_commentadd",methods=['GET', 'POST'])
+def StaffCommentAdd():
+    if request.method == 'POST':
+        manager_id = session.get("identity")
+        staff_id = request.form.get("staff_id")
+        comments = request.form.get("comments")
+        leadership = request.form.get("leadership")
+        time = datetime.datetime.today()
+        print(manager_id, staff_id, comments, leadership)
+        staff_comment = Staff_Comment(staff_id, manager_id, comments, time)
+        #db.session.add(staff_comment)
+        #db.session.commit()
+        return "1"
+
+# 6 推荐系统
+
+# 7 HR交流帖子系统
+
+# 系统主页
+@app.route("/index")
+def IndexPage():
+    username = session.get("identity", "默认用户")
+    return render_template("index.html", username=username)
 
 @app.route("/welcome")
 def welcome():
