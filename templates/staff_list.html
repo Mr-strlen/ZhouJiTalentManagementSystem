@@ -69,7 +69,6 @@
                                     <th>毕业院校</th>
 									<th>专业</th>
 									<th>学历</th>
-                                    <th>状态</th>
                                     <th>操作</th></tr>
                                 </thead>
                                 <tbody>
@@ -86,12 +85,7 @@
 										<td>{{ s.Staff_GraduateCollege }}</td>
 										<td>{{ s.Staff_Major }}</td>
 										<td>{{ s.Staff_Degree }}</td>
-										<td class="td-status">
-										  <span class="layui-btn layui-btn-normal layui-btn-mini">已启用</span></td>
 										<td class="td-manage">
-										  <a onclick="member_stop(this,'10001')" href="javascript:;"  title="启用">
-											<i class="layui-icon">&#xe601;</i>
-										  </a>
 										  <a title="查看简历" onclick="xadmin.open('{{s.Staff_Name}}简历','/staff_look/{{s.Staff_Identify}}',600,400)"  href="javascript:;">
 											<i class="layui-icon">&#xe68e;</i>
 										  </a>
@@ -103,7 +97,7 @@
 											<i class="layui-icon">&#xe640;</i>
 										  </a>
 										  <a title="员工评价" onclick="xadmin.open('{{s.Staff_Name}}新增评价','/staff_comment/{{s.Staff_Identify}}',600,400)"  href="javascript:;">
-											<i class="layui-icon">&#xe68e;</i>
+											<i class="layui-icon">&#xe6b2;</i>
 										  </a>
 										  
 										</td>
@@ -183,30 +177,6 @@
 
 
       });
-
-       /*用户-停用*/
-      function member_stop(obj,id){
-          layer.confirm('确认要停用吗？',function(index){
-
-              if($(obj).attr('title')=='启用'){
-
-                //发异步把用户状态进行更改
-                $(obj).attr('title','停用')
-                $(obj).find('i').html('&#xe62f;');
-
-                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
-                layer.msg('已停用!',{icon: 5,time:1000});
-
-              }else{
-                $(obj).attr('title','启用')
-                $(obj).find('i').html('&#xe601;');
-
-                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
-                layer.msg('已启用!',{icon: 5,time:1000});
-              }
-              
-          });
-      }
 
       /*用户-删除*/
       function member_del(obj,id){

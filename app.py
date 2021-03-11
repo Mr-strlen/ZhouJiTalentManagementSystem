@@ -1,13 +1,13 @@
-from flask import Flask, url_for,render_template,redirect,request,session,abort,flash
+from flask import Flask, url_for, render_template, redirect, request, session, abort, flash
 from flask_sqlalchemy import SQLAlchemy
-import os
+import os, datetime
 import random
 app=Flask(__name__)
 # session 秘钥
 app.secret_key = os.getenv("SECRET_KEY", "secret string")
 
 # orm初始化
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ZhouJiAdmin:ZhouJi123#@47.102.195.43:3306/ZhouJiTalentMS'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://ZhouJiAdmin:ZhouJi123#@47.102.195.43:3306/ZhouJiTalentMS?charset=utf8'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
@@ -315,7 +315,7 @@ def StaffDel(id):
     print(temp)
     db.session.delete(temp)
     db.session.commit()
-    data="1"
+    data = "1"
     return data
 
 # 2.3 档案修改（勘误）
@@ -329,13 +329,22 @@ def StaffLeave():
     return render_template("staff_leave.html")
 
 # 2.5 员工评价
-@app.route("/staff_comment/<id>",methods=['GET', 'POST'])
+@app.route("/staff_comment/<id>")
 def StaffComment(id):
-    staff_id=id
-    manageer_id=session.get("identity")
-    #if request.method == 'POST':
+    return render_template("staff_comment.html", staff_id=id)
 
-    return render_template("staff_comment.html")
+# 增加评价
+@app.route("/staff_commentadd",methods=['GET', 'POST'])
+def StaffCommentAdd():
+    if request.method == 'POST':
+        manager_id = session.get("identity")
+        staff_id = request.form.get("staff_id")
+        comments = request.form.get("comments")
+        time = datetime.datetime.today()
+        staff_comment = Staff_Comment(staff_id, manager_id, comments, time)
+        db.session.add(staff_comment)
+        db.session.commit()
+        return "1"
 
 ## 3. 未就业员工处理 - 员工联盟
 # 3.1  查询未就业人员 - 待业员工
