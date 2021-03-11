@@ -173,9 +173,35 @@ def IndexPage():
 
 ## 2. 员工档案管理
 # 2.1 建立档案 - 新人报道
-@app.route("/staff_add")
+@app.route("/staff_add",methods=['GET', 'POST'])
 def StaffAdd():
-    return render_template("staff_add.html")
+    # 获取Company 表的公司数据
+    company_lists = db.session.query(Company).all()
+    #for temp in company_lists:
+        #print(temp.Company_Name)
+    if request.method == 'POST':
+        username = request.form.get("username")
+        sexual = request.form.get("sexual")
+        id = request.form.get("id")
+        origin = request.form.get("origin")
+        gladuate_college = request.form.get("gladuate_college")
+        major = request.form.get("major")
+        degree = request.form.get("degree")
+        marriage = request.form.get("marriage")
+        politic = request.form.get("politic")
+        phone = request.form.get("phone")
+        unit = request.form.get("unit")
+        duty = request.form.get("duty")
+        history_unit = request.form.get("history_unit")
+        years = request.form.get("years")
+        #print(request.method)
+        #print(username,sexual,id,origin,gladuate_college,major,degree,marriage,politic,phone,unit,duty,history_unit,years)
+        # 添加用户
+        staff_info = Staff_Info(username, sexual, unit, phone, id, duty, years,origin , gladuate_college, major, degree, marriage, politic, history_unit)
+        db.session.add(staff_info)
+        db.session.commit()
+        return "1"
+    return render_template("staff_add.html",company_lists=company_lists)
 
 # 2.2 档案查询 - 员工群落
 @app.route("/staff_list",methods=['GET', 'POST'])
