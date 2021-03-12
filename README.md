@@ -15,10 +15,11 @@
 1. a标签
 
 ### 页面参数传递
-1. 从app.py传到html *jinja*
-2. 从html传到app.py *get/post ajax*
+1. 从app.py传到html **jinja**
+2. 从html传到app.py **get/post ajax**
 3. url路径参数传参
 
+### 对上述问题的补充回答
 1. 按钮跳转到网页--里面写跳转的网页，  如果是传递传数用表单
 2. app到html用jinjia模板，页面使用{{}}进行解析
 3. html到app.py可ajax可以使用json格式传递，app接收用request.args.get()
