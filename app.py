@@ -415,6 +415,16 @@ def staffInfoReply():
         reply_reason = request.form.get("reply_reason")
         reply_status = "0"
         reply_confirmid = ""
+        # 查询申请是否存在
+        count = db.session.query(Staff_InfoReply).filter(Staff_InfoReply.ReplyManager_Id == reply_id,
+                                                         Staff_InfoReply.Reply_Status == reply_status,
+                                                         Staff_InfoReply.TargetCompany_Name == reply_company).first()
+        print("status:%d" %count.Reply_Status)
+        # 判断申请是否存在，注意不能==reply_status,因为查询到的status是int,而reply_status是字符串
+        if count.Reply_Status == 0:
+            print("申请已存在")
+            return "3"
+        # print("count:" %count)
         print(reply_id, reply_company, reply_date, reply_reason)
         staffinfo_reply = Staff_InfoReply(reply_id,reply_company,reply_date,reply_status,reply_reason,reply_confirmid)
         db.session.add(staffinfo_reply)
