@@ -119,7 +119,7 @@ class Staff_Stars(db.Model):
     # 定义表名 ZJTMS_Manager_Info
     __tablename__ = "ZJTMS_Staff_Stars"
     # 定义字段
-    Stuff_Id = db.Column(db.String(20), nullable=False)
+    Staff_Id = db.Column(db.String(20), nullable=False)
     Manager_Id = db.Column(db.String(20), nullable=False)
     Leadership = db.Column(db.Integer, nullable=False)#领导力
     Creativity = db.Column(db.Integer, nullable=False)#创新性
@@ -129,7 +129,7 @@ class Staff_Stars(db.Model):
     Comment_Time = db.Column(db.DateTime, nullable=False, primary_key=True)
 
     def __init__(self, s_id, m_id, L1, C2, C3, H4, E5, time):
-        self.Stuff_Id = s_id
+        self.Staff_Id = s_id
         self.Manager_Id = m_id
         self.Leadership = L1
         self.Creativity = C2

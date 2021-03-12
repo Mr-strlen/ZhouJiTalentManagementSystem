@@ -2,6 +2,8 @@ from flask import Flask,url_for,render_template,redirect,request,session,abort,f
 from flask_sqlalchemy import SQLAlchemy
 import random, datetime
 import time
+import jieba
+import csv,math
 
 app = Flask(__name__)
 
@@ -93,6 +95,32 @@ class Staff_Comment(db.Model):
          self.Comments = comments
          self.Comments_Time = time_list
 
+# 员工星级评定表
+class Staff_Stars(db.Model):
+    # 定义表名 ZJTMS_Manager_Info
+    __tablename__ = "ZJTMS_Staff_Stars"
+    # 定义字段
+    Staff_Id = db.Column(db.String(20), nullable=False)
+    Manager_Id = db.Column(db.String(20), nullable=False)
+    Leadership = db.Column(db.Integer, nullable=False)#领导力
+    Creativity = db.Column(db.Integer, nullable=False)#创新性
+    Communication = db.Column(db.Integer, nullable=False)#交际能力
+    Hardworking = db.Column(db.Integer, nullable=True)#勤奋度
+    Efficiency = db.Column(db.Integer, nullable=True)#工作效率
+    Comment_Time = db.Column(db.DateTime, nullable=False, primary_key=True)
+
+    def __init__(self, s_id, m_id, L1, C2, C3, H4, E5, time):
+        self.Staff_Id = s_id
+        self.Manager_Id = m_id
+        self.Leadership = L1
+        self.Creativity = C2
+        self.Communication = C3
+        self.Hardworking = H4
+        self.Efficiency = E5
+        self.Comment_Time = time
+
+
+
 def GBK2312():
     temp=random.randint(1,2)
     head = random.randint(0xb0, 0xf7)
@@ -101,7 +129,89 @@ def GBK2312():
     str = bytes.fromhex(val).decode('gb2312')
     return str
 
-# 做一个粉刺
+
+@app.route('/test')
+def Test():
+    ## 词云生成
+    # 对于某一个特定员工 生成他的所有评价文本
+    comment = ""
+    id = "514985520001005447"
+    staff_list = db.session.query(Staff_Comment).filter(Staff_Comment.Staff_Id == id).all()
+    for i in staff_list:
+        temp = str(i.Comments[0:-1])
+        comment = comment + temp[0:-1]
+    # 分词统计
+    seg_list = jieba.cut(comment)
+    counts = {}
+    for word in seg_list:
+        counts[word] = counts.get(word, 0) + 1
+    # 删除停用词
+    stopword = [' ']
+    with open("./stopword.csv", newline='', encoding='utf-8')  as f:
+        reader = csv.reader(f)
+        for row in reader:
+            for i in row:
+                stopword.append(i)
+
+    for i in stopword:
+        if counts.get(i, 0) != 0:
+            counts.pop(i)
+
+    items = list(counts.items())
+    items.sort(key=lambda x: x[1], reverse=True)
+    # for i in range(0, 20):
+        # print(items[i][0], items[i][1])
+
+    # 选一部分词云展示 让每个员工都变得不一样（wink）
+    random_list = random.sample(range(0, len(items)-1), 120)
+    items_select=[]
+    for i in random_list:
+        items_select.append(items[i])
+
+    ## 基于词云的五个维度评价分数生成
+    Leadership_list = ["领导", "礼貌", "强", "待人", "成功"]
+    Creativity_list = ["希望", "学习", "期待", "成功", "很大"]
+    Communication_list = ["同事", "集体", "发言", "待人", "活动"]
+    Hardworking_list = ["员工", "努力", "工作", "提高", "假期"]
+    Efficiency_list = ["配合", "懂事", "听从", "遵守纪律", "纪律"]
+    score_list = [0, 0, 0, 0, 0] #基于词云的分数增加
+    # wordnum = 0
+    for i in items:
+        # wordnum = wordnum + i[1] #统计分词总数
+        if i[0] in Leadership_list:
+            score_list[0] = score_list[0] + i[1]
+        if i[0] in Creativity_list:
+            score_list[1] = score_list[1] + i[1]
+        if i[0] in Communication_list:
+            score_list[2] = score_list[2] + i[1]
+        if i[0] in Hardworking_list:
+            score_list[3] = score_list[3] + i[1]
+        if i[0] in Efficiency_list:
+            score_list[4] = score_list[4] + i[1]
+    #print(score_list)
+    for i in range(0,5):
+        score_list[i]=pow(3, (score_list[i]/100)) # 3^(i/threshold)
+        if score_list[i]>5:
+            score_list[i]=5
+    #print(score_list)
+    #return  render_template("test1.html", wordData=items_select)
+
+    ## 开始计算分数
+    score_temp = [0, 0, 0, 0, 0]
+    temp=db.session.query(Staff_Stars).filter(Staff_Stars.Staff_Id == id).all()
+    if len(temp)>0: # 有hr打分 就计算平均分
+        for i in temp:
+            score_temp[0] = score_temp[0]+i.Leadership
+            score_temp[1] = score_temp[1] + i.Creativity
+            score_temp[2] = score_temp[2] + i.Communication
+            score_temp[3] = score_temp[3] + i.Hardworking
+            score_temp[4] = score_temp[4] + i.Efficiency
+        for i in range(0,5):
+            score_list[i]=math.floor((score_list[i]+score_temp[i]/len(temp))*10)
+    print(score_list)
+    return  render_template("test.html",score_list=score_list)
+
+# 这是一个分词测试（功能已经被涵盖在test中）
 @app.route('/word_frequency')
 def WordFrequency():
     # 对于某一个特定员工 生成他的所有评价文本
@@ -116,15 +226,9 @@ def WordFrequency():
         f.write(comment)  # 将字符串写入文件中
     return 'NLP finished'
 
-# 评语增加
+# 评语增加 star打分增加
 @app.route('/comment')
 def comment():
-    f = open("PingYu.txt", "rb")
-    datatemp = f.readlines()
-    f.close()
-    data = []
-    for i in datatemp:
-        data.append(str(i, encoding="utf-8"))
     # 获取所有非COO的manager
     manager_list = db.session.query(Manager_Info).filter(Manager_Info.Manager_Permission == "N").all()
     # 获取所有非HR的员工
@@ -137,10 +241,18 @@ def comment():
 
     start = time.mktime(a1)  # 生成开始时间戳
     end = time.mktime(a2)  # 生成结束时间戳
-    # 开始挑选幸运观众
+    # 开始挑选幸运观众 添加评论和打分呦
+    '''
+    # 获取评语
+    f = open("PingYu.txt", "rb")
+    datatemp = f.readlines()
+    f.close()
+    data = []
+    for i in datatemp:
+        data.append(str(i, encoding="utf-8"))
     for comment in data:
-        i=random.randint(0,len(manager_list)-1)
-        j=random.randint(0,len(staff_list)-1)
+        i=random.randint(0, len(manager_list)-1)
+        j=random.randint(0, len(staff_list)-1)
         m_id=manager_list[i].Manager_Id
         s_id=staff_list[j].Staff_Identify
         t = random.randint(start, end)  # 在开始和结束时间戳中随机取出一个
@@ -150,7 +262,30 @@ def comment():
         #staff_comment=Staff_Comment(s_id, m_id, comment, date)
         #db.session.add(staff_comment)
         #db.session.commit()
-    return "评语增加完毕"
+    '''
+    for i in range(0,30):
+        i = random.randint(0, len(manager_list) - 1)
+        j = random.randint(0, len(staff_list) - 1)
+        m_id = manager_list[i].Manager_Id
+        s_id = staff_list[j].Staff_Identify
+        # 查看记录是否存在
+        temp=db.session.query(Staff_Stars).filter(Staff_Stars.Staff_Id == s_id, Staff_Stars.Manager_Id == m_id).all()
+        if len(temp)>0:
+            continue
+        else:
+            t = random.randint(start, end)  # 在开始和结束时间戳中随机取出一个
+            date_touple = time.localtime(t)  # 将时间戳生成时间元组
+            date = time.strftime("%Y-%m-%d %H:%M:%S", date_touple)
+            print(s_id, m_id, date)
+            L1=random.randint(1,5)
+            C2=random.randint(1,5)
+            C3=random.randint(1,5)
+            H4=random.randint(1,5)
+            E5=random.randint(1,5)
+            #staff_stars=Staff_Stars(s_id, m_id, L1, C2, C3, H4, E5, date)
+            #db.session.add(staff_stars)
+            #db.session.commit()
+    return "评语 打分增加完毕"
 
 
 @app.route('/')
