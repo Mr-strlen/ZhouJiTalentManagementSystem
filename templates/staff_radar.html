@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>员工评价雷达图</title>
+  <script src="../static/echarts.min.js"></script>
+</head>
+
+<body>
+  <div style="width: 600px;height:400px"></div>
+  <script>
+    var mCharts = echarts.init(document.querySelector("div"))
+    // 各个维度的最大值
+    var dataMax = [
+      { name: '领导力', max: 100 },
+      { name: '创新性', max: 100 },
+      { name: '交际能力', max: 100 },
+      { name: '勤奋度', max: 100 },
+      { name: '工作效率', max: 100 }]
+
+    var option = {
+      radar: {
+        indicator: dataMax, // 配置各个维度的最大值
+        shape: 'circle' // 配置雷达图最外层的图形：circle，默认值polygon
+      },
+      series: [
+        {
+          type: 'radar', // radar 此图表时一个雷达图
+          label: { // 设置标签的样式
+            show: true // 显示数值
+          },
+          areaStyle: {}, // 将每一个产品的雷达图形成阴影的面积
+          data: [
+            {
+              name: '华为手机1',
+              value: [{{score_list[0]}}, {{score_list[1]}}, {{score_list[2]}}, {{score_list[3]}}, {{score_list[4]}}]
+            }
+          ]
+        }
+      ]
+    }
+    mCharts.setOption(option)
+  </script>
+</body>
+
+</html>

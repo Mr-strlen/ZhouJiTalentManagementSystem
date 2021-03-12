@@ -1,7 +1,9 @@
 from flask import Flask, url_for, render_template, redirect, request, session, abort, flash
 from flask_sqlalchemy import SQLAlchemy
-import os, datetime
-import random
+import os, datetime, time, random
+import jieba
+import csv,math
+
 app=Flask(__name__)
 # session 秘钥
 app.secret_key = os.getenv("SECRET_KEY", "secret string")
@@ -88,11 +90,11 @@ class Staff_Comment(db.Model):
      Comments = db.Column(db.String(255), nullable=False)
      Comments_Time = db.Column(db.DateTime, nullable=False, primary_key=True)
 
-     def __init__(self, s_id, m_id, comments, time):
+     def __init__(self, s_id, m_id, comments, time_now):
          self.Staff_Id = s_id
          self.Manager_Id = m_id
          self.Comments = comments
-         self.Comments_Time = time
+         self.Comments_Time = time_now
 
 #  调档申请记录表
 class Staff_InfoReply(db.Model):
@@ -106,10 +108,10 @@ class Staff_InfoReply(db.Model):
      Reply_Reason = db.Column(db.String(255), nullable=True)
      Comfirm_Id = db.Column(db.String(20), nullable=True)
 
-     def __init__(self, m_id, company, time, status, reason, c_id):
+     def __init__(self, m_id, company, time_now, status, reason, c_id):
          self.ReplyManager_Id = m_id
          self.TargetCompany_Name = company
-         self.Reply_Time = time
+         self.Reply_Time = time_now
          self.Reply_Status = status
          self.Reply_Reason = reason
          self.Comfirm_Id = c_id
@@ -128,7 +130,7 @@ class Staff_Stars(db.Model):
     Efficiency = db.Column(db.Integer, nullable=True)#工作效率
     Comment_Time = db.Column(db.DateTime, nullable=False, primary_key=True)
 
-    def __init__(self, s_id, m_id, L1, C2, C3, H4, E5, time):
+    def __init__(self, s_id, m_id, L1, C2, C3, H4, E5, time_now):
         self.Staff_Id = s_id
         self.Manager_Id = m_id
         self.Leadership = L1
@@ -136,7 +138,7 @@ class Staff_Stars(db.Model):
         self.Communication = C3
         self.Hardworking = H4
         self.Efficiency = E5
-        self.Comment_Time = time
+        self.Comment_Time = time_now
 
 # 初始欢迎页
 @app.route("/")
@@ -426,7 +428,7 @@ def UnemployList():
 # 嵌套在页面内 未就业员工历史评价查看
 @app.route("/unemploy_historycomment/<id>")
 def UnemployHistoryComment(id):
-    temp = db.session.query(Staff_Comment).filter(Staff_Comment.Staff_Id == id).all()
+    temp = db.session.query(Staff_Comment).filter(Staff_Comment.Staff_Id == id).order_by(Staff_Comment.Comments_Time.desc()).limit(10).all()
     length=len(temp)
     m_name=[]
     for i in temp:
@@ -466,18 +468,97 @@ def StaffCommentAdd():
         communication = request.form.get("communication")
         hardworking = request.form.get("hardworking")
         efficiency = request.form.get("efficiency")
-        time = datetime.datetime.today()
+        time_now = datetime.datetime.today()
         print(manager_id, staff_id, comments, leadership, creativity, communication, hardworking, efficiency)
-        staff_comment = Staff_Comment(staff_id, manager_id, comments, time)
-        staff_stars = Staff_Stars(staff_id, manager_id, leadership, creativity, communication, hardworking, efficiency, time)
+        staff_comment = Staff_Comment(staff_id, manager_id, comments, time_now)
+        staff_stars = Staff_Stars(staff_id, manager_id, leadership, creativity, communication, hardworking, efficiency, time_now)
         db.session.add(staff_comment)
         db.session.commit()
         db.session.add(staff_stars)
         db.session.commit()
         return "1"
 
-# 6 推荐系统
+# 6 心心念念的基于NLP的推荐系统(＾－＾)V 实际上就是分词+词云+雷达图，但是我觉得很酷炫
+@app.route("/staff_radar/<id>",methods=['GET', 'POST'])
+def StaffRadar(id):
+    staff_list = db.session.query(Staff_Comment).filter(Staff_Comment.Staff_Id == id).all()
+    comment = ""  #记录所有评价
+    for i in staff_list:
+        temp = str(i.Comments[0:-1])
+        comment = comment + temp[0:-1]
+    # 分词统计
+    seg_list = jieba.cut(comment)
+    counts = {}
+    for word in seg_list:
+        counts[word] = counts.get(word, 0) + 1
+    # 删除停用词
+    path_file=os.path.dirname(os.path.abspath(__file__))
+    stopword = [' ']
+    with open(path_file+"\static\stopword.csv", newline='', encoding='utf-8')  as f:
+        reader = csv.reader(f)
+        for row in reader:
+            for i in row:
+                stopword.append(i)
+    for i in stopword:
+        if counts.get(i, 0) != 0:
+            counts.pop(i)
 
+    items = list(counts.items())
+    items.sort(key=lambda x: x[1], reverse=True)
+    # for i in range(0, 20):
+    # print(items[i][0], items[i][1])
+
+    # 选一部分词云展示 让每个员工都变得不一样（wink~）
+    random_list = random.sample(range(0, len(items) - 1), 120)
+    items_select = []
+    for i in random_list:
+        items_select.append(items[i])
+
+    ## 基于词云的五个维度评价分数生成
+    Leadership_list = ["领导", "礼貌", "强", "待人", "成功"]
+    Creativity_list = ["希望", "学习", "期待", "成功", "很大"]
+    Communication_list = ["同事", "集体", "发言", "待人", "活动"]
+    Hardworking_list = ["员工", "努力", "工作", "提高", "假期"]
+    Efficiency_list = ["配合", "懂事", "听从", "遵守纪律", "纪律"]
+    score_list = [0, 0, 0, 0, 0]  # 基于词云的分数增加
+    # wordnum = 0
+    for i in items:
+        # wordnum = wordnum + i[1] #统计分词总数
+        if i[0] in Leadership_list:
+            score_list[0] = score_list[0] + i[1]
+        if i[0] in Creativity_list:
+            score_list[1] = score_list[1] + i[1]
+        if i[0] in Communication_list:
+            score_list[2] = score_list[2] + i[1]
+        if i[0] in Hardworking_list:
+            score_list[3] = score_list[3] + i[1]
+        if i[0] in Efficiency_list:
+            score_list[4] = score_list[4] + i[1]
+    # print(score_list)
+    for i in range(0, 5):
+        score_list[i] = pow(3, (score_list[i] / 100))  # 3^(i/threshold)
+        if score_list[i] > 5:
+            score_list[i] = 5
+    # print(score_list)
+    # return  render_template("test1.html", wordData=items_select)
+
+    ## 开始计算分数
+    score_temp = [0, 0, 0, 0, 0]
+    temp = db.session.query(Staff_Stars).filter(Staff_Stars.Staff_Id == id).all()
+    if len(temp) > 0:  # 有hr打分 就计算平均分
+        for i in temp:
+            score_temp[0] = score_temp[0] + i.Leadership
+            score_temp[1] = score_temp[1] + i.Creativity
+            score_temp[2] = score_temp[2] + i.Communication
+            score_temp[3] = score_temp[3] + i.Hardworking
+            score_temp[4] = score_temp[4] + i.Efficiency
+        for i in range(0, 5):
+            score_list[i] = math.floor((score_list[i] + score_temp[i] / len(temp)) * 10)
+    else: # 没有hr打分 就当做0分
+        for i in range(0, 5):
+            score_list[i] = math.floor(score_list[i]  * 10)
+    print(score_list)
+    return render_template("staff_radar.html", score_list=score_list)
 # 7 HR交流帖子系统
 
 # 系统主页
