@@ -27,8 +27,7 @@
                             <span class="x-red">*</span>用户身份证号</label>
                         <div class="layui-input-inline">
                             <input type="text" id="L_username" name="username" required="" lay-verify="idname" autocomplete="off" class="layui-input"></div>
-						<div class="layui-form-mid layui-word-aux">
-                            <span class="x-red">*</span>将会成为您唯一的登入名</div></div>
+                    </div>
 
                     <div class="layui-form-item">
                         <label for="L_email" class="layui-form-label">
@@ -53,6 +52,7 @@
                     </div>
 
                     <div class="layui-form-item">
+                        <label for="L_repass" class="layui-form-label"></label>
                         <button class="layui-btn" lay-filter="add" lay-submit="">增加</button>
                         <button class="layui-btn" lay-filter="reset" lay-submit="" type="reset">重置</button>
                     </div>
@@ -100,16 +100,7 @@
 								});
                            }
                            else if(data=="2"){
-                           alert("您注册的用户已存在")
-                           }
-						   else if(data=="3"){
-                           alert("您注册的用户不是本系统的员工")
-                           }
-						   else if(data=="4"){
-                           alert("您注册的用户不是HR")
-                           }
-						   else if(data=="5"){
-                           alert("您注册的用户邮箱重复")
+                           alert("用户已存在")
                            }
                         },
                         error:function () {
