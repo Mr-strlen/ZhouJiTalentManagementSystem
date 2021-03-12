@@ -209,7 +209,7 @@ def Test():
         for i in range(0,5):
             score_list[i]=math.floor((score_list[i]+score_temp[i]/len(temp))*10)
     print(score_list)
-    return  render_template("test.html",score_list=score_list)
+    return  render_template("test.html", wordData=items_select, score_list=score_list)
 
 # 这是一个分词测试（功能已经被涵盖在test中）
 @app.route('/word_frequency')

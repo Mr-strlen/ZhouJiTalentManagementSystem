@@ -6,23 +6,96 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>员工评价雷达图</title>
-  <script src="../static/echarts.min.js"></script>
+  <script type="text/javascript" src="../static/echarts.min.js"></script>
+  <script type="text/javascript" src="../static/echarts-wordcloud.js"></script>
 </head>
 
 <body>
-  <div style="width: 600px;height:400px"></div>
-  <script>
-    var mCharts = echarts.init(document.querySelector("div"))
+	<div id="ciyun" style="width: 600px; height: 400px"></div>
+	<div id="radar" style="width: 600px; height: 400px"></div>
+</body>
+<script>
+	onload = function () {
+	  var data = {
+		value: [
+		{% for item in wordData %}
+			{"name": "{{ item[0] }}", "value": "{{ item[1] }}"},
+		{% endfor %}
+		],
+		  image:"data:image/png;base64,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"
+	  }
+	  var myChart = echarts.init(document.getElementById('ciyun'));
+	  var maskImage = new Image();
+	  maskImage.src = data.image
+
+	  maskImage.onload = function(){
+		myChart.setOption( {
+		  backgroundColor:'#fff',
+		  tooltip: {
+			show: false
+		  },
+		  series: [{
+			type: 'wordCloud',
+			gridSize: 1,
+			sizeRange: [12, 55],
+			rotationRange: [-45, 0, 45, 90],
+			maskImage: maskImage,
+			textStyle: {
+			  normal: {
+				color: function() {
+				  return 'rgb(' +
+					  Math.round(Math.random() * 255) +
+					  ', ' + Math.round(Math.random() * 255) +
+					  ', ' + Math.round(Math.random() * 255) + ')'
+				}
+			  }
+			},
+			left: 'center',
+			top: 'center',
+			right: null,
+			bottom: null,
+			data: data.value
+		  }]
+		})
+	  }
+
+	}
+</script>
+<script>
+    //1. ECharts最基本的代码结构
+    //2. 定义各个维度的最大值, 通过radar属性配置
+    //   易用性,功能,拍照,跑分,续航, 每个维度的最大值都是100
+    //3. 准备产品数据, 设置给series下的data
+    //   华为手机1: 80, 90, 80, 82, 90
+    //   中兴手机1: 70, 82, 75, 70, 78
+    //4. 将type的值设置为radar
+    var mCharts = echarts.init(document.getElementById('radar'))
     // 各个维度的最大值
     var dataMax = [
-      { name: '领导力', max: 100 },
-      { name: '创新性', max: 100 },
-      { name: '交际能力', max: 100 },
-      { name: '勤奋度', max: 100 },
-      { name: '工作效率', max: 100 }]
+      {
+        name: '领导力',
+        max: 100
+      },
+      {
+        name: '创新性',
+        max: 100
+      },
+      {
+        name: '交际能力',
+        max: 100
+      },
+      {
+        name: '勤奋度',
+        max: 100
+      },
+      {
+        name: '工作效率',
+        max: 100
+      }
+    ]
 
     var option = {
-      radar: {
+      radar: { 
         indicator: dataMax, // 配置各个维度的最大值
         shape: 'circle' // 配置雷达图最外层的图形：circle，默认值polygon
       },
@@ -43,7 +116,5 @@
       ]
     }
     mCharts.setOption(option)
-  </script>
-</body>
-
+</script>
 </html>

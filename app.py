@@ -558,7 +558,7 @@ def StaffRadar(id):
         for i in range(0, 5):
             score_list[i] = math.floor(score_list[i]  * 10)
     print(score_list)
-    return render_template("staff_radar.html", score_list=score_list)
+    return render_template("staff_radar.html", wordData=items_select, score_list=score_list)
 # 7 HR交流帖子系统
 
 # 系统主页
