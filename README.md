@@ -1,6 +1,34 @@
-#  ZhouJiTalentManagementSystem
+#  舟楫-跨公司人才管理系统 ZhouJiTalentManagementSystem
 <img src="https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/logo.png" width="120">
 “欲济无舟楫”？舟楫人才系统，为您的职业发展，保驾护航。
+## CAU镇星团队
+- 李丰
+- 王思诺
+- 钱鹏昊
+- 马红飞
+- 谢林浪
+- 陈翰雲
+
+## 项目日期
+2020.3.1-2020.3.18
+
+## 效果演示
+
+## 技术架构
+
+- 基于Flask框架
+- 前端：HTML+CSS+JS 
+- 数据库：SQLAlchemy+MySQL(orm封装)
+- 版本控制：Git
+- 可视化图表：Echarts, layui模板
+
+## 功能
+
+### 1 登录注册
+- 用户登录
+
+
+
 
 ## 设计的开发过程
 1. 第一部分 登录注册，档案简历，档案查询，查看离职情况
