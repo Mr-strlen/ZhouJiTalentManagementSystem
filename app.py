@@ -139,6 +139,42 @@ class Staff_Stars(db.Model):
         self.Hardworking = H4
         self.Efficiency = E5
         self.Comment_Time = time_now
+# 帖子发布记录数据库
+class Staff_Posts(db.Model):
+    # 定义表名 ZJTMS_Manager_Info
+    __tablename__ = "ZJTMS_Staff_Posts"
+    # 定义字段
+    Post_Id = db.Column(db.String(20), nullable=False, primary_key=True)
+    Manager_Id = db.Column(db.String(20), nullable=False)
+    Post_Title = db.Column(db.Text, nullable=False)#帖子标题
+    Post_Content = db.Column(db.Text, nullable=False)#帖子内容
+    Post_Label = db.Column(db.String(30), nullable=False)#帖子标签
+    Post_Time = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, p_id, m_id, p_title, p_content, p_label, p_time):
+        self.Post_Id = p_id
+        self.Manager_Id = m_id
+        self.Post_Title = p_title
+        self.Post_Content = p_content
+        self.Post_Label = p_label
+        self.Post_Time = p_time
+
+# 帖子回复数据库
+class Staff_PostReplys(db.Model):
+    # 定义表名 ZJTMS_Manager_Info
+    __tablename__ = "ZJTMS_Staff_PostReplys"
+    # 定义字段
+    Post_Id = db.Column(db.String(20), nullable=False)
+    Manager_Id = db.Column(db.String(20), nullable=False)
+    Reply_Content = db.Column(db.Text, nullable=False)#帖子内容
+    Reply_Time = db.Column(db.DateTime, nullable=False, primary_key=True)
+
+    def __init__(self, p_id, m_id, r_content, r_time):
+        self.Post_Id = p_id
+        self.Manager_Id = m_id
+        self.Reply_Content = r_content
+        self.Reply_Time = r_time
+
 
 # 初始欢迎页
 @app.route("/")
@@ -559,7 +595,93 @@ def StaffRadar(id):
             score_list[i] = math.floor(score_list[i]  * 10)
     print(score_list)
     return render_template("staff_radar.html", wordData=items_select, score_list=score_list)
-# 7 HR交流帖子系统
+
+# 7 HR交流帖子系统 就算做的再丑，再简单，也不能阻止我们打工人去吐槽
+@app.route("/post_list")
+def PostList():
+    temp = db.session.query(Staff_Posts).order_by(Staff_Posts.Post_Time.desc()).all()
+    length=len(temp)
+    m_name=[]
+    m_company=[]
+    for i in temp:
+        t=db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == i.Manager_Id).all()
+        if len(t)<1: # 为COO
+            t = db.session.query(Company).filter(Company.Boss_Id == i.Manager_Id).all()
+            if len(t)<1:
+                m_name.append("不知道从哪出来的用户哦")
+                m_company.append("天顶星科技无限集团")
+            else:
+                m_name.append(t[0].Boss_Name)
+                m_company.append(t[0].Company_Name)
+        else: # 为普通HR
+            m_name.append(t[0].Staff_Name)
+            if t[0].Staff_Unit == "Empty":
+                m_company.append("家里蹲技术有限公司")
+            else:
+                m_company.append(t[0].Staff_Unit)
+
+    return render_template("post_list.html", length=length, posts=temp, m_name=m_name, m_company=m_company)
+
+# 新增帖子
+@app.route("/post_add")
+def PostAdd():
+    return render_template("post_add.html")
+# 执行
+@app.route("/post_adddo", methods=['GET', 'POST'])
+def PostAddDo():
+    if request.method == 'POST':
+        p_id = time.strftime("%Y%m%d%H%M%S", time.localtime())
+        m_id = session.get("identity")
+        p_title = request.form.get("title", "就是没有标题", str)
+        p_content = request.form.get("content", "水经验", str)
+        p_label = request.form.get("contentlable", "吐槽", str)
+        p_time = datetime.datetime.today()
+        print(p_id, m_id, p_title, p_content, p_label, p_time)
+        staff_posts = Staff_Posts(p_id, m_id, p_title, p_content, p_label, p_time)
+        db.session.add(staff_posts)
+        db.session.commit()
+        return "1"
+
+# 查看帖子
+@app.route("/post_look/<id>", methods=['GET', 'POST'])
+def PostLook(id):
+    post_now = db.session.query(Staff_Posts).filter(Staff_Posts.Post_Id == id).all()
+    replys = db.session.query(Staff_PostReplys).filter(Staff_PostReplys.Post_Id == id).all()
+    m_name = []
+    m_company = []
+    for i in replys:
+        t = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == i.Manager_Id).all()
+        if len(t) < 1:  # 为COO
+            t = db.session.query(Company).filter(Company.Boss_Id == i.Manager_Id).all()
+            if len(t) < 1:
+                m_name.append("不知道从哪出来的用户哦")
+                m_company.append("天顶星科技无限集团")
+            else:
+                m_name.append(t[0].Boss_Name)
+                m_company.append(t[0].Company_Name)
+        else:  # 为普通HR
+            m_name.append(t[0].Staff_Name)
+            if t[0].Staff_Unit == "Empty":
+                m_company.append("家里蹲技术有限公司")
+            else:
+                m_company.append(t[0].Staff_Unit)
+    length = len(replys)
+    return render_template("post_look.html", post=post_now[0], replys=replys, length=length,rangeid=range(1,length+1), m_name=m_name, m_company=m_company, post_id=str(id))
+
+# 新增回复帖
+@app.route("/postreply_add", methods=['GET', 'POST'])
+def PostReplyAdd():
+    if request.method == 'POST':
+        p_id = request.form.get("post_id")
+        m_id = session.get("identity")
+        r_content = request.form.get("postreply", "默认回复", str)
+        r_time=datetime.datetime.today()
+        #print(p_id, m_id, r_content, r_time)
+        postreply = Staff_PostReplys(p_id, m_id, r_content, r_time)
+        db.session.add(postreply)
+        db.session.commit()
+        return "1"
+    return render_template("postreply_add.html")
 
 # 系统主页
 @app.route("/index")
