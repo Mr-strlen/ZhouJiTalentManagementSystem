@@ -51,7 +51,7 @@
                             <select id="unit" name="unit" class="valid">
                                 {% for company in company_lists %}
 
-                                    <option value={{ company.Company_Name }}>{{ company.Company_Name }}</option>
+                                    <option value={{ company}}>{{ company}}</option>
                                 {% endfor %}
                                 <!--Alibaba-->
                                 <!--Tencent-->
@@ -150,9 +150,10 @@
                             <span class="x-red">*</span>政治面貌</label>
                         <div class="layui-input-inline">
                             <select id="politic" name="politic" class="valid">
-                                <option value="党员">党员</option>
-                                <option value="团员">团员</option>
-                                <option value="群众">群众</option></select>
+                                <option value="中共党员">中共党员</option>
+                                <option value="共青团员">共青团员</option>
+                                <option value="群众">群众</option>
+                                <option value="民主派人士">民主派人士</option> </select>
                         </div>
                     </div>
                     <!--
@@ -205,9 +206,18 @@
                     -->
                     <div class="layui-form-item layui-form-text">
                         <label for="history_unit" class="layui-form-label">历史工作单位</label>
+
                         <div class="layui-input-block">
+                            <!--
                             <textarea placeholder="请输入内容" id="history_unit" name="history_unit" class="layui-textarea"></textarea>
+                        -->
+                            {% for company in company_lists %}
+                                <input name='history_unit_check' type="checkbox" value={{ company }}><label>{{ company }}</label>
+
+                            {% endfor %}
                         </div>
+                        <input type="button" onclick="chk()" value="确认"/>
+                        <textarea  id="history_unit" name="history_unit" class="layui-textarea" disabled="disabled"></textarea>
                     </div>
                     <div class="layui-form-item">
                         <label for="L_repass" class="layui-form-label"></label>
@@ -217,6 +227,24 @@
         </form>
         </div>
         </div>
+        <script>
+
+            function chk() {
+                var obj = document.getElementsByName('history_unit_check');
+                console.log(obj);
+                var s = '';
+                for (var i = 0; i < obj.length; i++) {
+                    if (obj[i].checked) s += obj[i].value + ',';
+                }
+                if (s=='')
+                    document.getElementById("history_unit").value="empty";
+                else
+                    document.getElementById("history_unit").value=s;
+
+            }
+
+        </script>
+
         <script>layui.use(['form', 'layer'],
             function() {
                 $ = layui.jquery;

@@ -257,6 +257,10 @@ def COORegister():
 def StaffAdd():
     # 获取Company 表的公司数据
     company_lists = db.session.query(Company).all()
+    namelists = []
+    for temp in company_lists:
+        namelists.append(temp.Company_Name)
+    namelists.remove('Empty')
     #for temp in company_lists:
         #print(temp.Company_Name)
     if request.method == 'POST':
@@ -281,7 +285,7 @@ def StaffAdd():
         db.session.add(staff_info)
         db.session.commit()
         return "1"
-    return render_template("staff_add.html",company_lists=company_lists)
+    return render_template("staff_add.html",company_lists=namelists)
 
 # 2.2 档案查询 - 员工群落
 @app.route("/staff_list",methods=['GET', 'POST'])
@@ -403,6 +407,7 @@ def staffInfoReply():
     for temp in company_lists:
         namelists.append(temp.Company_Name)
     namelists.remove(session.get("company"))
+    namelists.remove('Empty')
     print(namelists)
     # print(company_lists.remove(session.get("company")))
     permission = session.get("permission")

@@ -4,7 +4,7 @@
     <list default="true" id="6ca28fe8-c2ce-4f8a-a125-efda9d42cea3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/staffinfo_reply.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/staffinfo_reply.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/staff_add.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/staff_add.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +95,8 @@
       <workItem from="1615447638548" duration="655000" />
       <workItem from="1615448473980" duration="2936000" />
       <workItem from="1615452644045" duration="3692000" />
-      <workItem from="1615514866744" duration="6652000" />
+      <workItem from="1615514866744" duration="7552000" />
+      <workItem from="1615608247618" duration="4314000" />
     </task>
     <servers />
   </component>
@@ -103,6 +104,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ZhouJiTalentManagementSystem$ZhouJiTalentManagementSystem.coverage" NAME="ZhouJiTalentManagementSystem 覆盖结果" MODIFIED="1615522933201" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/ZhouJiTalentManagementSystem$ZhouJiTalentManagementSystem.coverage" NAME="ZhouJiTalentManagementSystem 覆盖结果" MODIFIED="1615612510863" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
