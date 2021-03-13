@@ -481,9 +481,38 @@ def UnemployHistoryComment(id):
 def staffInfoReply():
     return render_template("staffinfo_reply.html")
 # 4.2 COO批复申请
-@app.route("/staffinfo_confirm") #飞
+# 申请确认  #飞
+@app.route("/staffinfo_confirm")
 def StaffInfoConfirm():
-    return render_template("staffinfo_confirm.html")
+    mycom=session["company"]
+    # Staff_InfoReply.TargetCompany_Name == mycom
+    print("我的公司",mycom)
+    offset = request.args.get('offset', 0, int)
+    limit = request.args.get('limit', 10, int)
+    temp = db.session.query(Staff_InfoReply).filter(Staff_InfoReply.Reply_Status==0,Staff_InfoReply.TargetCompany_Name == mycom).all()
+    #count = len(db.session.query(Staff_InfoReply).all())
+    count=len(temp)
+   # print("len=",count,"name=",temp[0].name)
+
+    for i in range(count):
+       # print(temp[i].ReplyManager_Id)
+
+        hr=db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify==temp[i].ReplyManager_Id).first()
+
+        temp[i].name=hr.Staff_Name
+        temp[i].company=hr.Staff_Unit
+       # print(temp[i].name)
+
+    return render_template("staffinfo_confirm.html", page_data=temp, rangeid=0,
+                           offset=offset, limit=limit, count=count)
+
+@app.route("/staff_confirm/<id>")
+def StaffConfirm(id):
+    print("id= ",id)
+    temp = db.session.query(Staff_InfoReply).filter(Staff_InfoReply.ReplyManager_Id == id).first()
+    temp.Reply_Status=1
+    db.session.commit()
+    return "已同意"
 
 # 5 评价系统
 # 5.1 HR给员工进行评价 打分
