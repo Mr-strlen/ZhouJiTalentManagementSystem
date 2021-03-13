@@ -477,9 +477,46 @@ def UnemployHistoryComment(id):
 
 ## 4 跨公司申请
 # 4.1 HR提出申请
-@app.route("/staffinfo_reply") #烺
+@app.route("/staffinfo_reply",methods=['GET', 'POST']) #烺
 def staffInfoReply():
-    return render_template("staffinfo_reply.html")
+    # 获取Company 表的公司数据
+    company_lists = db.session.query(Company).all()
+    print(type(company_lists[0]))
+    print(session.get("company"))
+    namelists = []
+    for temp in company_lists:
+        namelists.append(temp.Company_Name)
+    namelists.remove(session.get("company"))
+    namelists.remove('Empty')
+    print(namelists)
+    # print(company_lists.remove(session.get("company")))
+    permission = session.get("permission")
+    if request.method == 'POST' and permission == 'S':
+        return "2"
+    if  request.method == 'POST' and permission=='N':
+        reply_id = session.get("identity")
+        reply_company = request.form.get("reply_company")
+        reply_date = datetime.datetime.today()
+        reply_reason = request.form.get("reply_reason")
+        reply_status = "0"
+        reply_confirmid = ""
+        # 查询申请是否存在
+        count = db.session.query(Staff_InfoReply).filter(Staff_InfoReply.ReplyManager_Id == reply_id,
+                                                         Staff_InfoReply.Reply_Status == reply_status,
+                                                         Staff_InfoReply.TargetCompany_Name == reply_company).first()
+        print("status:%d" %count.Reply_Status)
+        # 判断申请是否存在，注意不能==reply_status,因为查询到的status是int,而reply_status是字符串
+        if count.Reply_Status == 0:
+            print("申请已存在")
+            return "3"
+        # print("count:" %count)
+        print(reply_id, reply_company, reply_date, reply_reason)
+        staffinfo_reply = Staff_InfoReply(reply_id,reply_company,reply_date,reply_status,reply_reason,reply_confirmid)
+        db.session.add(staffinfo_reply)
+        db.session.commit()
+        return "1"
+    return render_template("staffinfo_reply.html",company_lists=namelists)
+
 # 4.2 COO批复申请
 # 申请确认  #飞
 @app.route("/staffinfo_confirm")
