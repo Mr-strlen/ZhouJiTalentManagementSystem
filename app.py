@@ -175,6 +175,18 @@ class Staff_PostReplys(db.Model):
         self.Reply_Content = r_content
         self.Reply_Time = r_time
 
+# 验证登录，若访问其他url时未登录则直接跳转登录页面，/login和/页面除外
+@app.before_request
+def process_request():
+    if request.path == '/login':
+        return None
+    if request.path == '/':
+        return None
+    if request.path == '/checklogin':
+        return None
+    if not session.get('logged_in'):
+        return redirect('login')
+
 
 # 初始欢迎页
 @app.route("/")
