@@ -92,11 +92,11 @@
       <workItem from="1615283744763" duration="64000" />
       <workItem from="1615283842242" duration="16659000" />
       <workItem from="1615421022695" duration="2758000" />
-      <workItem from="1615467477261" duration="24000" />
-      <workItem from="1615526637378" duration="1931000" />
-      <workItem from="1615529127600" duration="9755000" />
-      <workItem from="1615706986899" duration="3317000" />
-      <workItem from="1615711796566" duration="1437000" />
+      <workItem from="1615447638548" duration="655000" />
+      <workItem from="1615448473980" duration="2936000" />
+      <workItem from="1615452644045" duration="3692000" />
+      <workItem from="1615514866744" duration="7552000" />
+      <workItem from="1615608247618" duration="4314000" />
     </task>
     <servers />
   </component>
@@ -104,6 +104,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ZhouJiTalentManagementSystem$ZhouJiTalentManagementSystem.coverage" NAME="ZhouJiTalentManagementSystem 覆盖结果" MODIFIED="1615713177988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/ZhouJiTalentManagementSystem$ZhouJiTalentManagementSystem.coverage" NAME="ZhouJiTalentManagementSystem 覆盖结果" MODIFIED="1615612510863" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
