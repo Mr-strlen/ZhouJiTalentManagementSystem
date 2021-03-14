@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6ca28fe8-c2ce-4f8a-a125-efda9d42cea3" name="Default Changelist" comment="" />
+    <list default="true" id="6ca28fe8-c2ce-4f8a-a125-efda9d42cea3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/ZhouJiTalentManagementSystem.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ZhouJiTalentManagementSystem.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -91,6 +96,7 @@
       <workItem from="1615467477261" duration="24000" />
       <workItem from="1615526637378" duration="1931000" />
       <workItem from="1615529127600" duration="9755000" />
+      <workItem from="1615689119810" duration="2080000" />
     </task>
     <servers />
   </component>
@@ -98,6 +104,6 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ZhouJiTalentManagementSystem$ZhouJiTalentManagementSystem.coverage" NAME="ZhouJiTalentManagementSystem Coverage Results" MODIFIED="1615541527279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/ZhouJiTalentManagementSystem$ZhouJiTalentManagementSystem.coverage" NAME="ZhouJiTalentManagementSystem 覆盖结果" MODIFIED="1615690707137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
