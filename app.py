@@ -1,3 +1,5 @@
+import functools
+
 from flask import Flask, url_for, render_template, redirect, request, session, abort, flash
 from flask_sqlalchemy import SQLAlchemy
 import os, datetime, time, random
@@ -175,22 +177,15 @@ class Staff_PostReplys(db.Model):
         self.Reply_Content = r_content
         self.Reply_Time = r_time
 
-# 验证登录，若访问其他url时未登录则直接跳转登录页面，/login和/页面除外
-@app.before_request
-def process_request():
-    if request.path == '/login':
-        return None
-    if request.path == '/':
-        return None
-    if request.path == '/checklogin':
-        return None
-    if request.path == '/register':
-        return None
-    if request.path == '/COOregister':
-        return None
 
-    if not session.get('logged_in'):
-        return redirect('login')
+# 验证登录装饰器，添加到url下@auth，登录该url时进行登录验证
+def auth(func):   # 登录认证装饰器
+    @functools.wraps(func)
+    def inner(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect('/login')
+        return func(*args, **kwargs)
+    return inner
 
 
 # 初始欢迎页
@@ -309,6 +304,7 @@ def COORegister():
 ## 2. 员工档案管理
 # 2.1 建立档案 - 新人报道
 @app.route("/staff_add",methods=['GET', 'POST'])
+@auth
 def StaffAdd():
     # 获取Company 表的公司数据
     company_lists = db.session.query(Company).all()
@@ -344,6 +340,7 @@ def StaffAdd():
 
 # 2.2 档案查询 - 员工群落
 @app.route("/staff_list",methods=['GET', 'POST'])
+@auth
 def StaffList():
     username = request.args.get("username", '', str)
     degree = request.args.get("degree", '', str)
@@ -379,12 +376,14 @@ def StaffList():
 
 # 嵌套在页面内 员工个人档案查看
 @app.route("/staff_look/<id>")
+@auth
 def StaffLook(id):
     temp = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == id).all()
     return render_template("staff_look.html", person=temp[0])
 
 # 嵌套在页面内 员工个人删除查看
 @app.route("/staff_del/<id>",methods=['GET', 'POST'])
+@auth
 def StaffDel(id):
     print(id)
     temp=db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == id).first()
@@ -396,12 +395,14 @@ def StaffDel(id):
 
 # 2.3 档案修改（勘误）
 @app.route("/staff_change/<id>")
+@auth
 def StaffChange(id):
     temp = db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == id).all()
     return render_template("staff_change.html", person=temp[0])
 
 
 @app.route("/staff_edit",methods=['GET', 'POST'])
+@auth
 def StaffEdit():
     if request.method == 'POST':
         realname = request.form.get("realname", "", str)
@@ -447,12 +448,14 @@ def StaffEdit():
 
 # 2.4 档案修改（离职） - 员工离职
 @app.route("/staff_leave")
+@auth
 def StaffLeave():
     return render_template("staff_leave.html")
 
 ## 3. 未就业员工处理 - 员工联盟
 # 3.1  查询未就业人员 - 待业员工
 @app.route("/unemploy_list")
+@auth
 def UnemployList():
     username = request.args.get("username", '', str)
     degree = request.args.get("degree", '', str)
@@ -484,6 +487,7 @@ def UnemployList():
 
 # 嵌套在页面内 未就业员工历史评价查看
 @app.route("/unemploy_historycomment/<id>")
+@auth
 def UnemployHistoryComment(id):
     temp = db.session.query(Staff_Comment).filter(Staff_Comment.Staff_Id == id).order_by(Staff_Comment.Comments_Time.desc()).limit(10).all()
     length=len(temp)
@@ -499,6 +503,7 @@ def UnemployHistoryComment(id):
 ## 4 跨公司申请
 # 4.1 HR提出申请
 @app.route("/staffinfo_reply",methods=['GET', 'POST']) #烺
+@auth
 def staffInfoReply():
     # 获取Company 表的公司数据
     company_lists = db.session.query(Company).all()
@@ -543,6 +548,7 @@ def staffInfoReply():
 # 4.2 COO批复申请
 # 申请确认  #飞
 @app.route("/staffinfo_confirm")
+@auth
 def StaffInfoConfirm():
     mycom=session["company"]
     # Staff_InfoReply.TargetCompany_Name == mycom
@@ -567,6 +573,7 @@ def StaffInfoConfirm():
                            offset=offset, limit=limit, count=count)
 
 @app.route("/staff_confirm/<id>")
+@auth
 def StaffConfirm(id):
     print("id= ",id)
     temp = db.session.query(Staff_InfoReply).filter(Staff_InfoReply.ReplyManager_Id == id).first()
@@ -577,12 +584,14 @@ def StaffConfirm(id):
 # 5 评价系统
 # 5.1 HR给员工进行评价 打分
 @app.route("/staff_comment/<id>")
+@auth
 def StaffComment(id):
     print(id)
     return render_template("staff_comment.html", staff_id=id)
 
 # 增加评价 打分
 @app.route("/staff_commentadd",methods=['GET', 'POST'])
+@auth
 def StaffCommentAdd():
     if request.method == 'POST':
         manager_id = session.get("identity")
@@ -605,6 +614,7 @@ def StaffCommentAdd():
 
 # 6 心心念念的基于NLP的推荐系统(＾－＾)V 实际上就是分词+词云+雷达图，但是我觉得很酷炫
 @app.route("/staff_radar/<id>",methods=['GET', 'POST'])
+@auth
 def StaffRadar(id):
     staff_list = db.session.query(Staff_Comment).filter(Staff_Comment.Staff_Id == id).all()
     comment = ""  #记录所有评价
@@ -687,6 +697,7 @@ def StaffRadar(id):
 
 # 7 HR交流帖子系统 就算做的再丑，再简单，也不能阻止我们打工人去吐槽
 @app.route("/post_list")
+@auth
 def PostList():
     temp = db.session.query(Staff_Posts).order_by(Staff_Posts.Post_Time.desc()).all()
     length=len(temp)
@@ -713,10 +724,12 @@ def PostList():
 
 # 新增帖子
 @app.route("/post_add")
+@auth
 def PostAdd():
     return render_template("post_add.html")
 # 执行
 @app.route("/post_adddo", methods=['GET', 'POST'])
+@auth
 def PostAddDo():
     if request.method == 'POST':
         p_id = time.strftime("%Y%m%d%H%M%S", time.localtime())
@@ -733,6 +746,7 @@ def PostAddDo():
 
 # 查看帖子
 @app.route("/post_look/<id>", methods=['GET', 'POST'])
+@auth
 def PostLook(id):
     post_now = db.session.query(Staff_Posts).filter(Staff_Posts.Post_Id == id).all()
     replys = db.session.query(Staff_PostReplys).filter(Staff_PostReplys.Post_Id == id).all()
@@ -759,6 +773,7 @@ def PostLook(id):
 
 # 新增回复帖
 @app.route("/postreply_add", methods=['GET', 'POST'])
+@auth
 def PostReplyAdd():
     if request.method == 'POST':
         p_id = request.form.get("post_id")
@@ -774,11 +789,13 @@ def PostReplyAdd():
 
 # 系统主页
 @app.route("/index")
+@auth
 def IndexPage():
     username = session.get("identity", "默认用户")
     return render_template("index.html", username=username)
 
 @app.route("/welcome")
+@auth
 def welcome():
     return render_template("welcome.html")
 
