@@ -184,6 +184,11 @@ def process_request():
         return None
     if request.path == '/checklogin':
         return None
+    if request.path == '/register':
+        return None
+    if request.path == '/COOregister':
+        return None
+
     if not session.get('logged_in'):
         return redirect('login')
 
