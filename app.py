@@ -385,12 +385,15 @@ def StaffLook(id):
 @app.route("/staff_del/<id>",methods=['GET', 'POST'])
 @auth
 def StaffDel(id):
-    print(id)
-    temp=db.session.query(Staff_Info).filter(Staff_Info.Staff_Identify == id).first()
-    print(temp)
-    db.session.delete(temp)
+
+    print("\nid=",id)
+    temp=db.session.query(Staff_Info).filter(Staff_Info.Staff_Phone == id).first()
+    temp.Staff_HistoryUnit+=temp.Staff_Unit
+    temp.Staff_Unit="Empty"
+    print("\nname=",temp.Staff_Name)
+   # db.session.delete(temp)
     db.session.commit()
-    data = "1"
+    data = "2"
     return data
 
 # 2.3 档案修改（勘误）
