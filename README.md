@@ -16,6 +16,21 @@
 2020.3.1-2020.3.18
 
 ## 效果演示
+- [COO审批申请](https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91/A.COO%E5%AE%A1%E6%89%B9%E7%94%B3%E8%AF%B7.mp4)
+
+- [提交调档信息申请](https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91/A.%E6%8F%90%E4%BA%A4%E8%B0%83%E6%A1%A3%E4%BF%A1%E6%81%AF%E7%94%B3%E8%AF%B7.mp4)
+
+- [COO审批申请](https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91/A.COO%E5%AE%A1%E6%89%B9%E7%94%B3%E8%AF%B7.mp4)
+
+- [查看员工评价+高级评价系统](https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91/B.%E6%9F%A5%E7%9C%8B%E5%91%98%E5%B7%A5%E8%AF%84%E4%BB%B7%2B%E9%AB%98%E7%BA%A7%E8%AF%84%E4%BB%B7%E7%B3%BB%E7%BB%9F.mp4)
+
+- [添加员工评价](https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91/B.%E6%B7%BB%E5%8A%A0%E5%91%98%E5%B7%A5%E8%AF%84%E4%BB%B7.mp4)
+
+- [提交调档信息申请](https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91/A.%E6%8F%90%E4%BA%A4%E8%B0%83%E6%A1%A3%E4%BF%A1%E6%81%AF%E7%94%B3%E8%AF%B7.mp4)
+
+- [HR论坛](https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91/C.HR%E8%AE%BA%E5%9D%9B.mp4)
+
+- [员工离职](https://github.com/Mr-strlen/ZhouJiTalentManagementSystem/blob/main/%E6%BC%94%E7%A4%BA%E8%A7%86%E9%A2%91/D.%E5%91%98%E5%B7%A5%E7%A6%BB%E8%81%8C.mp4)
 
 ## 数据
 由于员工档案数据、调档申请和帖子系统并没有公开的数据集，这里使用随机生成的方式产生  
