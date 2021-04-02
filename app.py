@@ -11,7 +11,7 @@ app=Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "secret string")
 
 # orm初始化
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://ZhouJiAdmin:ZhouJi123#@47.102.195.43:3306/ZhouJiTalentMS?charset=utf8'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://Admin:Password#@IP:Port/Database?charset=utf8'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
